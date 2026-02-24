@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('price_info', 100);
             $table->string('location_name', 100);
             $table->string('neighborhood', 100);
+            $table->string('flyer', 100); 
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_18_plus')->default(true);
             $table->timestamps();

@@ -9,7 +9,7 @@ class Event extends Model
    protected $fillable = [
     'user_id', 'title', 'lineup', 'description', 'date', 
     'start_time', 'end_time', 'price', 'price_info', 
-    'location_name', 'neighborhood', 'is_verified', 'is_18_plus'
+    'location_name', 'neighborhood', 'is_verified', 'flyer', 'is_18_plus'
     ];
 
     // An event belongs to a user (organizer)
