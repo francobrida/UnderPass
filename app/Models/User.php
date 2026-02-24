@@ -23,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'points',
+        'avatar'
     ];
 
     /**
@@ -45,6 +48,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'role' => \app\Enums\UserRole::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -61,4 +65,11 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function isOrganizer()
+    {
+        return $this->role === \App\Enums\UserRole::ORGANIZER;
+    }
+
+    
 }
