@@ -57,7 +57,7 @@ class User extends Authenticatable
     /**
      * Get the user's initials
      */
-    public function initials(): string
+    public function initials() : string
     {
         return Str::of($this->name)
             ->explode(' ')
@@ -66,10 +66,17 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function isOrganizer()
-    {
+    public function isOrganizer() : bool {
         return $this->role === \App\Enums\UserRole::ORGANIZER;
     }
 
-    
+    public function stamps() {
+    return $this->hasMany(Stamp::class);
+    }
+
+    // An user can create many events, but an event belongs to one user (the organizer)
+    public function events() {
+        return $this->hasMany(Event::class);
+    }
+
 }

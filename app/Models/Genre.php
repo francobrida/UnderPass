@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Genre extends Model
 {
     protected $fillable = ['name', 'slug'];
+
+    public function events() {
+    return $this->belongsToMany(Event::class, 'event_genre');
+    }
+
 }
