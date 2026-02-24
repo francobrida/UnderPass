@@ -20,9 +20,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nickname',
         'email',
         'password',
+        'role',
+        'points',
+        'avatar'
     ];
 
     /**
@@ -45,6 +48,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'role' => \app\Enums\UserRole::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -53,12 +57,26 @@ class User extends Authenticatable
     /**
      * Get the user's initials
      */
-    public function initials(): string
+    public function initials() : string
     {
-        return Str::of($this->name)
+        return Str::of($this->nickname)
             ->explode(' ')
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function isOrganizer() : bool {
+        return $this->role === \App\Enums\UserRole::ORGANIZER;
+    }
+
+    public function stamps() {
+    return $this->hasMany(Stamp::class);
+    }
+
+    // An user can create many events, but an event belongs to one user (the organizer)
+    public function events() {
+        return $this->hasMany(Event::class);
+    }
+
 }
