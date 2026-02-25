@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Create an admin user
         User::factory()->create([
-            'nickname' => 'Admin UnderPass', // Corregido de 'name' a 'nickname'
+            'nickname' => 'Admin UnderPass', 
             'email' => 'admin@underpass.com',
             'role' => UserRole::ADMIN,
             'points' => 100,

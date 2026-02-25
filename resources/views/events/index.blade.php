@@ -14,9 +14,9 @@
                 Under<span class="text-purple-500">Pass</span>
             </h1>
             <div class="space-x-6 text-sm font-medium uppercase tracking-widest text-gray-400">
-                <a href="#" class="hover:text-purple-400 transition">Eventos</a>
+                <a href="#" class="hover:text-purple-400 transition">Mis Eventos</a>
                 <a href="#" class="hover:text-purple-400 transition">Mi Perfil</a>
-                <a href="#" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">Login</a>
+                <a href="/login" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">Login</a>
             </div>
         </div>
     </nav>
@@ -31,9 +31,9 @@
             @foreach($events as $event)
                 <article class="group bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 transform hover:-translate-y-2 shadow-2xl">
                     <div class="h-48 bg-gradient-to-br from-purple-900 to-black relative">
-                        <img src="" -- aqui hay que cargar cada flyer. 
-                             alt="Techno event" 
-                             class="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+                        <img src="{{ $event->flyer }}" 
+                            alt="Flyer de {{ $event->title }}" 
+                            class="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity"> 
                         <div class="absolute top-4 left-4">
                             <span class="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-white/20">
                                 {{ $event->neighborhood }}
@@ -65,7 +65,9 @@
                         </div>
 
                         <button class="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-purple-500 hover:text-white transition-colors duration-300 uppercase text-xs tracking-widest">
-                            Ver Detalles
+                            <a href="{{ route('events.show', $event) }}" class="inline-block w-full text-center ...">
+                                Access_File_//
+                            </a>
                         </button>
                     </div>
                 </article>

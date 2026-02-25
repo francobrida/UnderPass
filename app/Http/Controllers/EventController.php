@@ -9,10 +9,17 @@ class EventController extends Controller
 {
     public function index()
     {
-        // Traemos todos los eventos de la base de datos
         $events = Event::all();
 
-        // Los enviamos a una vista llamada 'events.index'
         return view('events.index', compact('events'));
     }
+
+    public function show(Event $event)
+    {
+        $event->load(['genres', 'organizer']);
+
+        return view('events.show', compact('event'));
+    }
+
+
 }
