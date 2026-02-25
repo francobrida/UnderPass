@@ -3,21 +3,28 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Enums\UserRole; // Importante para asignar el rol
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // 1. Create an admin user
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'nickname' => 'Admin UnderPass', 
+            'email' => 'admin@underpass.com',
+            'role' => UserRole::ADMIN,
+            'points' => 100,
         ]);
+
+    
+        $this->call([
+            GenreSeeder::class,
+            EventSeeder::class,
+        ]);
+
+        // 3. Create 10 events with admin user as the organizer
+        \App\Models\Event::factory(10)->create();
     }
 }
