@@ -13,18 +13,19 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained(); // constrained asume que la tabla relacionada es 'users' y la columna es 'id'
             $table->string('title', 100);
             $table->text('lineup');
             $table->text('description');
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
-            $table->decimal('price', 8, 2);
+            $table->decimal('price', 8, 2)->default(0);
             $table->string('price_info', 100);
+            $table->string('ticket_link', 100)->nullable();
             $table->string('location_name', 100);
             $table->string('neighborhood', 100);
-            $table->string('flyer', 100); 
+            $table->string('flyer', 100)->nullable(); 
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_18_plus')->default(true);
             $table->timestamps();

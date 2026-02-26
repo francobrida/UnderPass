@@ -14,7 +14,7 @@
                 Under<span class="text-purple-500">Pass</span>
             </h1>
             <div class="space-x-6 text-sm font-medium uppercase tracking-widest text-gray-400">
-                <a href="#" class="hover:text-purple-400 transition">Mis Eventos</a>
+                <a href="/my-events" class="hover:text-purple-400 transition">Mis Eventos</a>
                 <a href="#" class="hover:text-purple-400 transition">Mi Perfil</a>
                 <a href="/login" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">Login</a>
             </div>
