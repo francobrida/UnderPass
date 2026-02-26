@@ -32,7 +32,7 @@
                             
                             <div class="flex items-center justify-between pt-4 border-t border-gray-800">
                                 <a href="{{ route('events.edit', $event) }}" class="text-[10px] font-black text-purple-400 hover:text-white uppercase tracking-widest transition">
-                                    Editar Flyer
+                                    Editar Evento
                                 </a>
                                 
                                 <form action="{{ route('events.destroy', $event) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este evento? No hay vuelta atrás.');">

@@ -40,7 +40,9 @@ class EventController extends Controller
 
     public function create()
     {
-        return view('events.create');
+        // Obtenemos todos los géneros de la base de datos (id y name)
+        $genres = \App\Models\Genre::all();
+        return view('events.create', compact('genres'));
     }
 
     public function store(Request $request)
@@ -54,16 +56,27 @@ class EventController extends Controller
             'end_time'      => 'required',
             'price'         => 'required|numeric|min:0',
             'price_info' => 'nullable|string|max:100', 
-            'ticket_link' => 'nullable|string|max:100',
+            'ticket_link' => 'nullable|url',
             'location_name' => 'required|string|max:100',
+            'flyer' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'neighborhood'  => 'required|string|max:100',
+            'genres' => 'required|array|min:1', // Al menos un género seleccionado
+            'genres.*' => 'exists:genres,id',    // Verifica que el ID existe en la tabla genres
         ]);
 
         if (empty($validated['price_info'])) {
             $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
         }
 
-        $request->user()->events()->create($validated);
+        // Gestión de la imagen
+        if ($request->hasFile('flyer')) {
+            $path = $request->file('flyer')->store('flyers', 'public');
+            $validated['flyer_path'] = $path;
+        }
+
+        $event = $request->user()->events()->create($validated);
+        // Sincronizamos con la tabla intermedia 'event_genre'
+        $event->genres()->attach($request->genres);
 
         return redirect()->route('events.my')->with('success', 'Evento creado. Esperando verificaciones! 0/3');
 
