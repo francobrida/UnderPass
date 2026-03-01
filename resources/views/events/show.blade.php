@@ -27,7 +27,7 @@
                     <div class="relative group rounded-3xl overflow-hidden border border-gray-800 shadow-2xl">
                        <img src="{{ $event->flyer }}" 
                             alt="Flyer de {{ $event->title }}" 
-                            class="w-full object-cover aspect-[4/4] group-hover:scale-105 transition-transform duration-700">
+                            class="w-full object-cover aspect-[4/4]">
                     </div>
                 </div>
             </div>

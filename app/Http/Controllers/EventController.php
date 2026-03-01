@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Genre;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        // Solo traemos los eventos donde 'is_verified' sea true (o 1)
+        $events = Event::with('genres')->where('is_verified', true) ->latest()->get();
 
-        return view('events.index', compact('events')); // compact sends $events to the view.
+        return view('events.index', compact('events'));
     }
 
     public function show(Event $event)
@@ -26,13 +30,10 @@ class EventController extends Controller
         // Usamos $request->user(), que es lo mismo pero el editor lo entiende mejor
         $user = $request->user();
 
-        // Si por algún milagro llegara aquí sin estar logueado, evitamos el crash
         if (!$user) {
             return redirect()->route('login');
         }
-        // 2. Usamos la relación events() que creamos en el modelo User.
-        // Esto hace un "SELECT * FROM events WHERE user_id = id_del_usuario"
-        // latest() para que sus creaciones más recientes salgan primero.
+   
         $events = $user->events()->latest()->get();
 
         return view('events.my', compact('events'));
@@ -40,7 +41,6 @@ class EventController extends Controller
 
     public function create()
     {
-        // Obtenemos todos los géneros de la base de datos (id y name)
         $genres = \App\Models\Genre::all();
         return view('events.create', compact('genres'));
     }
@@ -71,7 +71,7 @@ class EventController extends Controller
         // Gestión de la imagen
         if ($request->hasFile('flyer')) {
             $path = $request->file('flyer')->store('flyers', 'public');
-            $validated['flyer_path'] = $path;
+            $validated['flyer'] = $path;
         }
 
         $event = $request->user()->events()->create($validated);
@@ -84,28 +84,76 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        $this->authorize('update', $event); // verifies if the user can update the event, otherwise throws a 403 error. necessary?
-        return view('events.edit', compact('event'));
+        // --- SEGURIDAD MANUAL ---
+        // Verificamos si el usuario logueado es el dueño del evento
+        if ($event->user_id !== Auth::id()) {
+            abort(403, 'No tienes permiso para editar este evento.');
+        }
+        // ------------------------
+
+        $genres = Genre::all();
+        
+        return view('events.edit', compact('event', 'genres'));
     }
 
     public function update(Request $request, Event $event) 
     {
+        // --- SEGURIDAD MANUAL ---
+        // Verificamos si el usuario logueado es el dueño antes de actualizar
+        if ($event->user_id !== Auth::id()) {
+            abort(403, 'No tienes permiso para actualizar este evento.');
+        }
+        // ------------------------
+
+        // 1. Validar todos los campos del formulario
         $validated = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'flyer' => 'nullable|image|max:2048', 
+            'lineup' => 'required|string',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'location_name' => 'required|string',
+            'neighborhood' => 'required|string',
+            'price' => 'numeric',
+            'price_info' => 'nullable|string',
+            'ticket_link' => 'nullable|url',
         ]);
 
+        // 2. Gestión de la imagen (Flyer)
+        if ($request->hasFile('flyer')) {
+            // Borrar el archivo viejo si existe
+            if ($event->flyer) {
+                Storage::disk('public')->delete($event->flyer);
+            }
+            // Guardar el archivo nuevo
+            $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
+        }
+
+        // 3. Actualizar los datos del evento
         $event->update($validated);
 
-        return redirect()->route('events.show', $event)->with('success', 'Evento actualizado.');
+        // 4. Sincronizar géneros (tabla intermedia)
+        $event->genres()->sync($request->genres);
+
+        return redirect()->route('events.my')->with('success', 'Evento actualizado correctamente.');
     }
 
-    public function delete(Event $event)
+    public function destroy(Request $request, Event $event) 
     {
-        $this->authorize('delete', $event); // verifies if the user can delete the event, otherwise throws a 403 error.
+
+        if ($request->user()->id !== $event->user_id) {
+            abort(403, 'No tienes permiso para borrar este evento.');
+        }
+
+        if ($event->flyer_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->flyer_path);
+        }
+
         $event->delete();
 
-        return redirect()->route('events.index')->with('success', 'Evento eliminado.');
+        return redirect()->route('events.my')->with('success', 'Evento eliminado.');
     }
 
 }
