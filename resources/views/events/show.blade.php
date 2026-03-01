@@ -27,7 +27,7 @@
                     <div class="relative group rounded-3xl overflow-hidden border border-gray-800 shadow-2xl">
                        <img src="{{ $event->flyer }}" 
                             alt="Flyer de {{ $event->title }}" 
-                            class="w-full object-cover aspect-[4/4] group-hover:scale-105 transition-transform duration-700">
+                            class="w-full object-cover aspect-[4/4]">
                     </div>
                 </div>
             </div>
@@ -56,8 +56,8 @@
                             <span class="font-bold uppercase tracking-tight">{{ substr($event->start_time, 0, 5) }}h - {{ substr($event->end_time, 0, 5) }}h</span>
                         </div>
                         <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span class="font-bold uppercase tracking-tight">{{ substr($event->start_time, 0, 5) }}h - {{ substr($event->end_time, 0, 5) }}h</span>
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                            <span class="font-bold uppercase tracking-tight">{{ $event->neighborhood }}</span>
                         </div>
                     </div>
                 </header>
@@ -90,7 +90,7 @@
                             Ver entradas en Resident Advisor ↗
                         </a>
                         <p class="text-center text-gray-600 text-[10px] mt-4 uppercase tracking-widest">
-                            *UnderPass no gestiona la venta de entradas. (por ahora)
+                            *UnderPass no gestiona venta de entradas. (por ahora, patience my young padawan)
                         </p>
                     </section>
                 </div>
