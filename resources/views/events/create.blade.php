@@ -104,7 +104,7 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="location_name" class="block text-xs font-bold text-purple-400 uppercase mb-2">Club / Sala</label>
+                                <label for="location_name" class="block text-xs font-bold text-purple-400 uppercase mb-2">Dónde?</label>
                                 <input type="text" name="location_name" id="location_name" value="{{ old('location_name') }}"
                                     class="w-full bg-gray-800 border-gray-700 text-white rounded-xl focus:ring-purple-500 focus:border-purple-500 transition shadow-inner"
                                     placeholder="Ej: Garage de Pepe">
