@@ -70,6 +70,10 @@ class User extends Authenticatable
         return $this->role === \App\Enums\UserRole::ORGANIZER;
     }
 
+    public function isAdmin() : bool {
+        return $this->role === 'admin'; 
+    }
+
     public function stamps() {
     return $this->hasMany(Stamp::class);
     }
