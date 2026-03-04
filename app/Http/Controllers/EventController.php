@@ -156,4 +156,16 @@ class EventController extends Controller
         return redirect()->route('events.my')->with('success', 'Evento eliminado.');
     }
 
+    public function adminIndex()
+    {
+        $user = Auth::user();
+
+        // Accedemos a ->value para obtener el texto "admin" que hay dentro del objeto
+        if ($user->role->value !== 'admin') {
+            return redirect('/')->with('error', 'No tienes permiso de admin');
+        }
+
+        $events = Event::all();
+        return view('admin.events.index', compact('events'));
+    }
 }

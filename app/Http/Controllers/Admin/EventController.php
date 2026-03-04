@@ -1,36 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin; // Mantenemos solo este
 
-namespace App\Http\Controllers;
-use App\Models\Event;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller; // IMPORTANTE: Para que encuentre el controlador base
+use App\Models\Event;                // IMPORTANTE: Para que encuentre el modelo Event
+use App\Models\Genre;                // IMPORTANTE: Para que encuentre el modelo Genre
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Genre;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
     public function index()
     {
-        // Solo traemos los eventos donde 'is_verified' sea true (o 1)
-        $events = Event::with('genres')->where('is_verified', true) ->latest()->get();
+        // CAMBIO: El admin debe ver TODOS (incluyendo los no verificados)
+        $events = Event::with('genres')->latest()->get();
 
-        return view('events.index', compact('events'));
+        return view('admin.index', compact('events'));
     }
 
     public function show(Event $event)
     {
         $event->load(['genres', 'organizer']);
-
         return view('events.show', compact('event')); 
     }
 
     public function create()
     {
-        $genres = \App\Models\Genre::all();
-        return view('events.create', compact('genres'));
+        $genres = Genre::all();
+        return view('admin.events.create', compact('genres'));
     }
+
+    // ... resto de tus funciones (store, edit, update, destroy) ...
+    // Asegúrate de que las redirecciones en store/update/destroy 
+    // apunten a 'admin.events.index'
 
     public function store(Request $request)
     {
@@ -65,7 +68,7 @@ class EventController extends Controller
         // Sincronizamos con la tabla intermedia 'event_genre'
         $event->genres()->attach($request->genres);
 
-        return redirect()->route('events.my')->with('success', 'Evento creado. Esperando verificaciones! 0/3');
+        return redirect()->route('admin.index')->with('success', 'Evento creado. Esperando verificaciones! 0/3');
 
     }
 
@@ -111,20 +114,34 @@ class EventController extends Controller
         // 4. Sincronizar géneros (tabla intermedia)
         $event->genres()->sync($request->genres);
 
-        return redirect()->route('admin.events.index')->with('success', 'Evento actualizado por el administrador.');
+        return redirect()->route('admin.index')->with('success', 'Evento actualizado por el administrador.');
     }
 
     public function destroy(Event $event) 
     {
-
-        if ($event->flyer_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->flyer_path);
+        $user = Auth::user();
+        // Solo permitimos borrar si: es el dueño O es admin
+        if ($user->id === $event->user_id || $user->role === 'admin') {
+            $event->delete();
+            return back()->with('success', 'Borrado con éxito');
         }
 
-        $event->delete();
-
-        return redirect()->route('admin.events.index')->with('success', 'Evento eliminado por el administrador.');
+        abort(403);
     }
 
+    /*
+    public function adminIndex()
+    {
+        // Usamos Auth::user() en lugar de auth()->user()
+        $user = Auth::user();
+
+        if (!$user || $user->role !== 'admin') {
+            return redirect('/')->with('error', 'No tienes permiso');
+        }
+
+        $events = Event::all();
+        return view('admin.index', compact('events'));
+    }
+*/
 
 }
