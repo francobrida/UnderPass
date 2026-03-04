@@ -10,12 +10,46 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Solo traemos los eventos donde 'is_verified' sea true (o 1)
-        $events = Event::with('genres')->where('is_verified', true) ->latest()->get();
+        $genres = \App\Models\Genre::all();
 
-        return view('events.index', compact('events'));
+        // 1. Iniciamos la consulta (SIN el get() al final)
+        $query = Event::with('genres')->where('is_verified', true);
+
+        // 2. Filtro por nombre o lineup
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('lineup', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // 3. Filtro por Barrio
+        if ($request->filled('neighborhood')) {
+            $query->where('neighborhood', $request->neighborhood);
+        }
+
+        // 4. Filtro por Estilo (Género)
+        if ($request->filled('genre')) {
+            $query->whereHas('genres', function($q) use ($request) {
+                $q->where('genres.id', $request->genre);
+            });
+        }
+
+        // 5. Ordenar por Precio
+        if ($request->price === 'asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($request->price === 'desc') {
+            $query->orderBy('price', 'desc');
+        } else {
+            $query->latest(); // Orden por defecto (más nuevos primero)
+        }
+
+        // 6. AHORA SÍ: Ejecutamos la consulta final
+        $events = $query->get();
+
+        return view('events.index', compact('events', 'genres'));
     }
 
     public function show(Event $event)
@@ -147,7 +181,7 @@ class EventController extends Controller
             abort(403, 'No tienes permiso para borrar este evento.');
         }
 
-        if ($event->flyer_path) {
+        if ($event->flyer) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($event->flyer);
         }
 
