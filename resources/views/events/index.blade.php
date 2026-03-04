@@ -15,20 +15,32 @@
             </h1>
             
             <div class="flex items-center space-x-6 text-sm font-medium uppercase tracking-widest text-gray-400">
-                @auth
+                {{-- Comprobación manual de sesión --}}
+                @if(auth()->check())
+                    
+                    {{-- Comprobación manual de Admin (por ID o por Rol) --}}
+                    @if(auth()->check() && auth()->user()->role->value === 'admin')
+                        <a href="{{ route('admin.index') }}" class="...">
+                            Panel de Admin
+                        </a>
+                    @endif
+
                     <a href="{{ route('events.my') }}" class="hover:text-purple-400 transition">Mis Eventos</a>
                     <a href="/profile" class="hover:text-purple-400 transition">Mi Perfil</a>
+                    
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="text-gray-600 hover:text-red-500 transition text-[10px] font-black uppercase border border-gray-800 px-3 py-1 rounded-lg">
                             Logout
                         </button>
                     </form>
+
                 @else
+                    {{-- Si no hay sesión iniciada --}}
                     <a href="{{ route('login') }}" class="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition shadow-lg shadow-purple-500/20">
                         Login
                     </a>
-                @endauth
+                @endif
             </div>
         </div>
     </nav>

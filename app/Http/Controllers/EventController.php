@@ -86,7 +86,7 @@ class EventController extends Controller
     {
         // --- SEGURIDAD MANUAL ---
         // Verificamos si el usuario logueado es el dueño del evento
-        if ($event->user_id !== Auth::id()) {
+        if ($event->user_id !== Auth::id() && Auth::user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para editar este evento.');
         }
         // ------------------------
@@ -100,7 +100,7 @@ class EventController extends Controller
     {
         // --- SEGURIDAD MANUAL ---
         // Verificamos si el usuario logueado es el dueño antes de actualizar
-        if ($event->user_id !== Auth::id()) {
+        if ($event->user_id !== Auth::id() && $request->user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para actualizar este evento.');
         }
         // ------------------------
@@ -143,12 +143,12 @@ class EventController extends Controller
     public function destroy(Request $request, Event $event) 
     {
 
-        if ($request->user()->id !== $event->user_id) {
+        if ($request->user()->id !== $event->user_id && $request->user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para borrar este evento.');
         }
 
         if ($event->flyer_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->flyer_path);
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->flyer);
         }
 
         $event->delete();
@@ -156,4 +156,16 @@ class EventController extends Controller
         return redirect()->route('events.my')->with('success', 'Evento eliminado.');
     }
 
+    public function adminIndex()
+    {
+        $user = Auth::user();
+
+        // Accedemos a ->value para obtener el texto "admin" que hay dentro del objeto
+        if ($user->role->value !== 'admin') {
+            return redirect('/')->with('error', 'No tienes permiso de admin');
+        }
+
+        $events = Event::all();
+        return view('admin.events.index', compact('events'));
+    }
 }

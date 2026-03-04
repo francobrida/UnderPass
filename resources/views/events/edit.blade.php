@@ -138,6 +138,16 @@
                             @error('ticket_link') <p class="text-red-500 text-[10px] mt-1 font-bold uppercase">{{ $message }}</p> @enderror
                         </div>
 
+                        <div>
+                            @if(auth()->check() && auth()->user()->role->value === 'admin')
+                                <label class="inline-flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="is_verified" value="1" {{ $event->is_verified ? 'checked' : '' }} 
+                                        class="rounded border-gray-700 text-purple-600 focus:ring-purple-500 bg-gray-900 transition">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-purple-400">Verificado</span>
+                                </label>
+                            @endif
+                        </div>
+
                         <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-800">
                             <a href="{{ route('events.my') }}" class="text-gray-500 hover:text-white text-xs font-bold uppercase transition">Cancelar</a>
                             <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition shadow-lg shadow-purple-500/20">
