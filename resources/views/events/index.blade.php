@@ -25,6 +25,7 @@
                         </a>
                     @endif
 
+                    <a href="{{ route('events.waiting-room') }}" class="hover:text-purple-400 transition">Waiting Room</a>
                     <a href="{{ route('events.my') }}" class="hover:text-purple-400 transition">Mis Eventos</a>
                     <a href="/profile" class="hover:text-purple-400 transition">Mi Perfil</a>
                     

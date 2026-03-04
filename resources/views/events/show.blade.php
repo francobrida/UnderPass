@@ -23,7 +23,7 @@
             <div class="md:col-span-5">
                 <div class="border border-white/10 bg-zinc-900 sticky top-20">
                     @if($event->flyer)
-                        <img src="{{ asset('storage/' . $event->flyer) }}" alt="{{ $event->title }}" class="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700">
+                        <img src="{{ asset('storage/' . $event->flyer) }}" alt="{{ $event->title }}" class="w-full">
                     @else
                         <div class="aspect-[3/4] flex items-center justify-center text-[9px] uppercase tracking-widest text-gray-600">No Flyer</div>
                     @endif

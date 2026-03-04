@@ -26,5 +26,15 @@ Route::middleware('auth')->group(function () {
 Route::get('/panel-admin', [EventController::class, 'adminIndex'])->name('admin.index')->middleware('auth');
 Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy')->middleware('auth');
 
-// 4. Rutas con parámetros dinámicos (van AL FINAL)
+Route::middleware(['auth'])->group(function () {
+    
+    // Vista de la "Sala de Espera"
+    Route::get('/waiting-room', [EventController::class, 'waitingRoom'])->name('events.waiting-room');
+
+    // Acción de dar Vouch
+    Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
+    
+});
+
+// 4. Rutas con parámetros dinámicos 
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');

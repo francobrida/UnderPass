@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    public const int VOUCHES_TO_VERIFY = 3;
+
     public function index(Request $request)
     {
         $genres = \App\Models\Genre::all();
@@ -153,7 +155,12 @@ class EventController extends Controller
             'price' => 'numeric',
             'price_info' => 'nullable|string',
             'ticket_link' => 'nullable|url',
+            'is_verified' => 'nullable|boolean'
         ]);
+
+        if ($request->user()->role->value === 'admin') {
+            $validated['is_verified'] = $request->has('is_verified');
+        }
 
         // 2. Gestión de la imagen (Flyer)
         if ($request->hasFile('flyer')) {
@@ -201,5 +208,43 @@ class EventController extends Controller
 
         $events = Event::all();
         return view('admin.events.index', compact('events'));
+    }
+
+    public function waitingRoom()
+    {
+        // Asegúrate de que este where coincida con cómo se guardan en la DB
+        $events = Event::where('is_verified', false) 
+            ->withCount('vouches')
+            ->latest()
+            ->get();
+
+        return view('events.waiting-room', compact('events'));
+    }
+
+    public function vouch(Event $event)
+    {
+        $user = Auth::user();
+
+        // 1. No auto-vouch
+        if ($event->user_id === $user->id) {
+            return back()->with('error', 'No puedes votar tu propio evento.');
+        }
+
+        // 2. Avoid duplicate vouches
+        if ($event->vouches()->where('user_id', $user->id)->exists()) {
+            return back()->with('info', 'Ya has dado tu fe por este evento.');
+        }
+
+        // 3. Registrar el voto (usamos attach para la tabla pivote)
+        $event->vouches()->attach($user->id);
+
+        // 4. logic to check if event should be verified
+        if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
+            $event->update(['is_verified' => true]);
+            return redirect()->route('events.index')
+                ->with('success', '¡Evento verificado! Ahora es visible para todos.');
+        }
+
+        return back()->with('success', 'Voto registrado.');
     }
 }

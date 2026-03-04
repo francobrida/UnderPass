@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vouches', function (Blueprint $table) {
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('event_id')->constrained()->onDelete('cascade');
-        $table->primary(['user_id', 'event_id']); // this ensures a user can only vouch for an event once
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->primary(['user_id', 'event_id']); 
+            $table->timestamps(); // Adds created_at y updated_at
         });
     }
 

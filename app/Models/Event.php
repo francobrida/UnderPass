@@ -32,6 +32,11 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'vouches');
     }
 
+    public function getVouchProgressAttribute()
+    {
+        return $this->vouches()->count();
+    }
+
     public function stamps() {
         return $this->hasMany(Stamp::class);
     }
