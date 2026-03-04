@@ -21,11 +21,47 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
             
             <div class="md:col-span-5">
-                <div class="border border-white/10 bg-zinc-900 sticky top-20">
-                    @if($event->flyer)
-                        <img src="{{ asset('storage/' . $event->flyer) }}" alt="{{ $event->title }}" class="w-full">
-                    @else
-                        <div class="aspect-[3/4] flex items-center justify-center text-[9px] uppercase tracking-widest text-gray-600">No Flyer</div>
+                <div class="sticky top-20 space-y-6">
+                    <div class="border border-white/10 bg-zinc-900">
+                        @if($event->flyer)
+                            <img src="{{ asset('storage/' . $event->flyer) }}" alt="{{ $event->title }}" class="w-full">
+                        @else
+                            <div class="aspect-[3/4] flex items-center justify-center text-[9px] uppercase tracking-widest text-gray-600">No Flyer</div>
+                        @endif
+                    </div>
+
+                    @if(auth()->id() === $event->user_id)
+                        <div class="p-6 border border-white/10 bg-zinc-950 text-center">
+                            <h3 class="text-[9px] font-black uppercase tracking-[0.3em] mb-4 text-gray-500 italic">Stamp QR Code</h3>
+                            
+                            @if($event->stamp_token)
+                                @php
+                                    // To generate the QR code URL
+                                    $claimUrl = route('events.stamp.claim', $event->stamp_token);
+                                    
+                                    // Using external service QuickChart to generate QR code image URL
+                                    $qrUrl = "https://quickchart.io/qr?text=" . urlencode($claimUrl) . "&size=300&margin=2";
+                                @endphp
+
+                                <div class="bg-white p-2 inline-block mb-4 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                                    <img src="{{ $qrUrl }}" alt="QR Code" class="w-40 h-40">
+                                </div>
+                                
+                                <div class="flex flex-col gap-2">
+                                    <a href="{{ $qrUrl }}" 
+                                    target="_blank"
+                                    download="QR_STAMP_{{ Str::slug($event->title) }}.png"
+                                    class="inline-block w-full py-2 border border-white/20 text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+                                        Descargar QR 
+                                    </a>
+                                    <p class="text-[8px] text-zinc-600 uppercase tracking-tighter">Click para abrir y guardar imagen</p>
+                                </div>
+                            @else
+                                <div class="py-2">
+                                    <p class="text-[9px] text-red-500 uppercase font-black italic">Token Missing</p>
+                                </div>
+                            @endif
+                        </div>
                     @endif
                 </div>
             </div>
