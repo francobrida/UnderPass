@@ -7,16 +7,6 @@
                         Editar <span class="text-purple-500">Evento</span>
                     </h2>
                     
-                    @if ($errors->any())
-                        <div class="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-xl mb-6">
-                            <ul class="list-disc list-inside text-xs font-bold uppercase">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
                     <form action="{{ route('events.update', $event) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT') <div x-data="{ imageUrl: '{{ $event->flyer_path ? asset('storage/' . $event->flyer_path) : null }}' }">

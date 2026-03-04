@@ -25,6 +25,7 @@
                         </a>
                     @endif
 
+                    <a href="{{ route('events.waiting-room') }}" class="hover:text-purple-400 transition">Waiting Room</a>
                     <a href="{{ route('events.my') }}" class="hover:text-purple-400 transition">Mis Eventos</a>
                     <a href="/profile" class="hover:text-purple-400 transition">Mi Perfil</a>
                     
@@ -51,15 +52,72 @@
             <p class="text-gray-500 uppercase tracking-widest text-sm">Explora la escena underground de Barcelona</p>
         </header>
 
+        <section class="mb-12">
+            <form action="{{ route('events.index') }}" method="GET" class="bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                    
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-black">Búsqueda</label>
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                            placeholder="Evento o Artista..." 
+                            class="bg-black border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition">
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-black">Zona / Barrio</label>
+                        <select name="neighborhood" class="bg-black border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-500 outline-none transition appearance-none">
+                            <option value="">Todos los barrios</option>
+                            <option value="Poblenou" {{ request('neighborhood') == 'Poblenou' ? 'selected' : '' }}>Poblenou</option>
+                            <option value="Raval" {{ request('neighborhood') == 'Raval' ? 'selected' : '' }}>Raval</option>
+                            <option value="Born" {{ request('neighborhood') == 'Born' ? 'selected' : '' }}>Born</option>
+                            <option value="Poble-Sec" {{ request('neighborhood') == 'Poble-Sec' ? 'selected' : '' }}>Poble-Sec</option>
+                            <option value="Eixample" {{ request('neighborhood') == 'Eixample' ? 'selected' : '' }}>Eixample</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-black">Estilo Musical</label>
+                        <select name="genre" class="bg-black border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-500 outline-none transition appearance-none">
+                            <option value="">Cualquier estilo</option>
+                            @foreach($genres as $genre)
+                                <option value="{{ $genre->id }}" {{ request('genre') == $genre->id ? 'selected' : '' }}>
+                                    {{ $genre->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-black">Precio</label>
+                        <select name="price" class="bg-black border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-500 outline-none transition appearance-none">
+                            <option value="">Sin preferencia</option>
+                            <option value="asc" {{ request('price') == 'asc' ? 'selected' : '' }}>Más económicos</option>
+                            <option value="desc" {{ request('price') == 'desc' ? 'selected' : '' }}>Más caros</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button type="submit" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest transition shadow-lg shadow-purple-500/20">
+                            Filtrar
+                        </button>
+                        <a href="{{ route('events.index') }}" class="bg-gray-800 hover:bg-gray-700 text-gray-300 p-3 rounded-xl transition" title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($events as $event)
-                <article class="group bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 transform hover:-translate-y-2 shadow-2xl">
+                <article class="group bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/50">
                     
                     <div class="h-56 bg-gray-800 relative overflow-hidden">
                         @if($event->flyer)
                             <img src="{{ asset('storage/' . $event->flyer) }}" 
                                  alt="Flyer de {{ $event->title }}" 
-                                 class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                                 class="w-full h-full object-cover group-hover:opacity-100 transition-opacity duration-500">
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-purple-900/20 text-purple-500 uppercase text-[10px] font-black tracking-widest">No_Flyer_Available</div>
                         @endif
