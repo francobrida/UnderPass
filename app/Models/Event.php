@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -39,6 +40,16 @@ class Event extends Model
 
     public function stamps() {
         return $this->hasMany(Stamp::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($event) {
+            $event->stamp_token = Str::random(32); /* this generates a unique random token for the event, 
+             which will be used for claiming stamps */
+        });
     }
 
 }

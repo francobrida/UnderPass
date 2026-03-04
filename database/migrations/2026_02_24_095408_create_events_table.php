@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(); // constrained asume que la tabla relacionada es 'users' y la columna es 'id'
+            $table->foreignId('user_id')->constrained(); // this creates the relationship with the users table (organizer)
             $table->string('title', 100);
             $table->text('lineup');
             $table->text('description');
@@ -29,6 +29,7 @@ return new class extends Migration
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_18_plus')->default(true);
             $table->timestamps();
+            $table->string('stamp_token')->unique()->nullable();
         });
     }
 

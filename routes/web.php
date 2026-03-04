@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Rutas de administración "a mano"
+// Rutas de administración
 Route::get('/panel-admin', [EventController::class, 'adminIndex'])->name('admin.index')->middleware('auth');
 Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy')->middleware('auth');
 
@@ -35,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
     
 });
+
+Route::get('/stamps/claim/{token}', [EventController::class, 'claimStamp'])->name('events.stamp.claim')->middleware('auth');
 
 // 4. Rutas con parámetros dinámicos 
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');

@@ -19,7 +19,11 @@
                     <div class="bg-gray-900 border border-purple-900/20 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-500 group">
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-white group-hover:text-purple-400 transition">{{ $event->title }}</h3>
+                                <a href="{{ route('events.show', $event) }}" class="group">
+                                    <h3 class="text-gray-400 text-lg font-bold uppercase leading-none mb-2 group-hover:text-purple-500 transition-colors">
+                                        {{ $event->title }}
+                                    </h3>
+                                </a>
                                 
                                 @if($event->is_verified)
                                     <span class="bg-green-500/10 text-green-400 text-[10px] font-black px-2 py-1 rounded-md border border-green-500/20 uppercase tracking-tighter">Verificado</span>
