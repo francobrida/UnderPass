@@ -28,13 +28,14 @@
                         <th class="p-4">Barrio</th>
                         <th class="p-4">Fecha</th>
                         <th class="p-4">Precio</th>
+                        <th class="p-4">Verificado</th>
                         <th class="p-4 text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800">
                     @foreach($events as $event)
                     <tr class="hover:bg-gray-800/50 transition">
-                        <td class="p-4 font-bold text-purple-400">{{ $event->title }}</td>
+                        <td class="p-4 font-bold">{{ $event->title }}</td>
                         <td class="p-4 text-sm">{{ $event->neighborhood }}</td>
                         <td class="p-4 text-sm text-gray-400">
                             {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}
@@ -42,19 +43,25 @@
                         <td class="p-4 text-sm font-mono">
                             {{ $event->price > 0 ? $event->price . '€' : 'FREE' }}
                         </td>
-                        
-                        <td class="p-4 flex justify-center space-x-3">
-                            <a href="{{ route('events.show', $event) }}" class="text-blue-400 hover:underline text-xs uppercase font-bold">Ver</a>
-                            
-                            <a href="{{ route('events.edit', $event) }}" class="text-blue-400 hover:underline text-xs uppercase font-bold">Editar</a>
 
-                            <form action="{{ route('admin.destroy', $event) }}" method="POST" onsubmit="return confirm('¿Eliminar definitivamente?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:underline text-xs uppercase font-bold">
-                                    Borrar
-                                </button>
-                            </form>
+                        <td class="p-4 font-bold">{{ $event->is_verified ? 'Si' : 'No'}}</td>
+                        
+                        <td class="p-4">
+                            <div class="flex items-center justify-center space-x-3">
+                                
+                                <a href="{{ route('events.show', $event) }}" class="text-blue-400 hover:underline text-xs uppercase font-bold">Ver</a>
+                                
+                                <a href="{{ route('events.edit', $event) }}" class="text-blue-500 hover:underline text-xs uppercase font-bold">Editar</a>
+
+                                <form action="{{ route('admin.destroy', $event) }}" method="POST" class="flex items-center" onsubmit="return confirm('¿Eliminar definitivamente?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline text-xs uppercase font-bold leading-none p-0 m-0 border-none bg-transparent">
+                                        Eliminar
+                                    </button>
+                                </form>
+                                
+                            </div>
                         </td>
                     </tr>
                     @endforeach

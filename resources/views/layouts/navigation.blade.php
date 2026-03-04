@@ -9,6 +9,11 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->check() && auth()->user()->role->value === 'admin')
+                        <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.index')">
+                        {{ __('Panel de Admin') }}
+                        </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')">
                         {{ __('Eventos') }}
                     </x-nav-link>
