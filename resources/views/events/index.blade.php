@@ -53,7 +53,7 @@
             <h2 class="text-5xl font-extrabold mb-2 italic tracking-tighter">AGENDA DEL UNDER</h2>
             <p class="text-gray-500 uppercase tracking-widest text-sm">Explora la escena underground de Barcelona</p>
         </header>
-
+        // Filters
         <section class="mb-12">
             <form action="{{ route('events.index') }}" method="GET" class="bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -110,7 +110,7 @@
                 </div>
             </form>
         </section>
-
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($events as $event)
                 <article class="group bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/50">

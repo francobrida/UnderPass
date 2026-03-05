@@ -37,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Acción de dar Vouch
     Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
+
+    // Vibecheck
+    Route::get('/vibecheck/{event}', [StampController::class, 'vibecheckForm'])->name('events.vibecheck');
     
 });
 

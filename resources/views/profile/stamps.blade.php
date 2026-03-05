@@ -21,37 +21,45 @@
         </header>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @forelse($stamps as $stamp)
-                <div class="group relative aspect-square border border-white/10 bg-zinc-900 overflow-hidden hover:border-purple-500/50 transition-colors">
-                    
-                    @if($stamp->event->flyer)
-                        <img src="{{ asset('storage/' . $stamp->event->flyer) }}" 
-                             class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale group-hover:grayscale-0 group-hover:opacity-40 transition-all duration-500">
-                    @endif
+            @if(count($stamps) > 0)
+                @foreach($stamps as $stamp)
+                    <div class="group relative aspect-ratio-1/2 border border-white/10 bg-zinc-900 overflow-hidden">
 
-                    <div class="relative h-full p-6 flex flex-col justify-between z-10">
-                        <div class="flex justify-between items-start">
-                            <span class="text-[8px] font-black bg-purple-500 text-white px-2 py-0.5 uppercase tracking-tighter">Verified</span>
-                            <span class="text-[8px] text-zinc-500 font-mono italic">#{{ str_pad($stamp->id, 5, '0', STR_PAD_LEFT) }}</span>
+                        <div class="relative h-full p-6 flex flex-col justify-between z-10">
+                            <div>
+                                <h3 class="text-m font-black uppercase leading-tight mb-1">{{ $stamp->event->title }}</h3>
+                                <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">
+                                    {{ \Carbon\Carbon::parse($stamp->scanned_at)->format('d.m.y') }}
+                                </p>
+                            </div>
+
+                            @php
+                                $eventEnd = \Carbon\Carbon::parse($stamp->event->date . ' ' . $stamp->event->end_time);
+                                $canVibeCheck = now()->greaterThan($eventEnd->addHours(6)); 
+                            @endphp
+
+                            @if($canVibeCheck)
+                                <a href="{{ route('events.vibecheck', $stamp->event->id) }}" 
+                                class="inline-block py-2 bg-purple-600 text-[9px] font-black uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors">
+                                    Vibecheck Disponible
+                                </a>
+                            @else
+                                <div class="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
+                                    Vibecheck próximamente...
+                                </div>
+                            @endif
                         </div>
 
-                        <div>
-                            <h3 class="text-sm font-black uppercase leading-tight mb-1">{{ $stamp->event->title }}</h3>
-                            <p class="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">
-                                {{ \Carbon\Carbon::parse($stamp->scanned_at)->format('d.m.y') }}
-                            </p>
+                        <div class="absolute -bottom-4 -right-4 w-24 h-24 border-4 border-purple-500/20 rounded-full flex items-center justify-center rotate-12 pointer-events-none group-hover:border-purple-500/40 transition-colors">
+                            <span class="text-[16px] font-black text-purple-500/20 uppercase tracking-tighter italic ">OK</span>
                         </div>
                     </div>
-
-                    <div class="absolute -bottom-4 -right-4 w-24 h-24 border-4 border-purple-500/20 rounded-full flex items-center justify-center rotate-12 pointer-events-none group-hover:border-purple-500/40 transition-colors">
-                        <span class="text-[10px] font-black text-purple-500/20 uppercase group-hover:text-purple-500/40 tracking-tighter">STAMPED</span>
-                    </div>
-                </div>
-            @empty
+                @endforeach
+            @else
                 <div class="col-span-full py-20 border border-dashed border-white/10 text-center">
                     <p class="text-[10px] text-zinc-600 uppercase tracking-[0.4em] italic">Aún no has coleccionado ningún sello.</p>
                 </div>
-            @endforelse
+            @endif
         </div>
     </main>
 
