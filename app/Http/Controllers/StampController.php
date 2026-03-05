@@ -48,4 +48,19 @@ class StampController extends Controller
         return redirect()->route('user.stamps') // Redirigimos a la colección para que lo vea
             ->with('success', '¡Nuevo sello añadido a tu pasaporte!');
     }
+
+    public function vibecheckForm(Event $event)
+    {
+        $user = Auth::user();
+        // 1. Validar que el usuario tenga el stamp de este evento
+        $hasStamp = \App\Models\Stamp::where('user_id', $user->id())
+                    ->where('event_id', $event->id)
+                    ->exists();
+
+        if (!$hasStamp) {
+            return redirect()->route('events.index')->with('error', 'No puedes evaluar un evento al que no asististe.');
+        }
+
+        return view('event.vibecheck', compact('event'));
+    }
 }

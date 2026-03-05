@@ -16,8 +16,10 @@ class EventController extends Controller
     {
         $genres = \App\Models\Genre::all();
 
-        // 1. Iniciamos la consulta (SIN el get() al final)
-        $query = Event::with('genres')->where('is_verified', true);
+        // 1. Iniciamos la consulta: verificados Y que no hayan pasado de fecha
+        $query = Event::with('genres')
+            ->where('is_verified', true)
+            ->where('date', '>=', now()->toDateString()); // <--- ESTO: Solo hoy o futuro
 
         // 2. Filtro por nombre o lineup
         if ($request->filled('search')) {
@@ -45,10 +47,9 @@ class EventController extends Controller
         } elseif ($request->price === 'desc') {
             $query->orderBy('price', 'desc');
         } else {
-            $query->latest(); // Orden por defecto (más nuevos primero)
+            $query->orderBy('date', 'asc');
         }
 
-        // 6. AHORA SÍ: Ejecutamos la consulta final
         $events = $query->get();
 
         return view('events.index', compact('events', 'genres'));
@@ -201,7 +202,6 @@ class EventController extends Controller
     {
         $user = Auth::user();
 
-        // Accedemos a ->value para obtener el texto "admin" que hay dentro del objeto
         if ($user->role->value !== 'admin') {
             return redirect('/')->with('error', 'No tienes permiso de admin');
         }
@@ -212,7 +212,6 @@ class EventController extends Controller
 
     public function waitingRoom()
     {
-        // Asegúrate de que este where coincida con cómo se guardan en la DB
         $events = Event::where('is_verified', false) 
             ->withCount('vouches')
             ->latest()
