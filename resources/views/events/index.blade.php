@@ -15,11 +15,8 @@
             </h1>
             
             <div class="flex items-center space-x-6 text-sm font-medium uppercase tracking-widest text-gray-400">
-                {{-- Comprobación manual de sesión --}}
                 @if(auth()->check())
-                    
-                    {{-- Comprobación manual de Admin (por ID o por Rol) --}}
-                    @if(auth()->check() && auth()->user()->role->value === 'admin')
+                    @if(auth()->user()->role->value === 'admin')
                         <a href="{{ route('admin.index') }}" class="...">
                             Panel de Admin
                         </a>
@@ -27,6 +24,12 @@
 
                     <a href="{{ route('events.waiting-room') }}" class="hover:text-purple-400 transition">Waiting Room</a>
                     <a href="{{ route('events.my') }}" class="hover:text-purple-400 transition">Mis Eventos</a>
+                    @auth
+                        <a href="{{ route('user.stamps') }}" 
+                        class="hover:text-purple-400 transition" {{ request()->routeIs('user.stamps') ? 'text-purple-500' : 'text-gray-500 hover:text-white' }} transition">
+                            Mis Sellos
+                        </a>
+                    @endauth
                     <a href="/profile" class="hover:text-purple-400 transition">Mi Perfil</a>
                     
                     <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -37,7 +40,6 @@
                     </form>
 
                 @else
-                    {{-- Si no hay sesión iniciada --}}
                     <a href="{{ route('login') }}" class="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition shadow-lg shadow-purple-500/20">
                         Login
                     </a>
