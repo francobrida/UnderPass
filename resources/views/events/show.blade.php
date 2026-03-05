@@ -30,7 +30,7 @@
                         @endif
                     </div>
 
-                    @if(auth()->id() === $event->user_id)
+                    @if(auth()->id() === $event->user_id && $event->is_verified)
                         <div class="p-6 border border-white/10 bg-zinc-950 text-center">
                             <h3 class="text-[9px] font-black uppercase tracking-[0.3em] mb-4 text-gray-500 italic">Stamp QR Code</h3>
                             
