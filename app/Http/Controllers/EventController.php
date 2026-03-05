@@ -268,7 +268,6 @@ class EventController extends Controller
             'scanned_at' => now(),
         ]);
 
-        return redirect()->route('events.show', $event)
-                        ->with('success', '¡Sello conseguido! Se ha añadido a tu colección.');
+        return redirect()->route('events.show', $event)->with('success', '¡Sello conseguido! Se ha añadido a tu colección.');
     }
 }
