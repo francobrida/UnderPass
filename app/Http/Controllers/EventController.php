@@ -247,26 +247,4 @@ class EventController extends Controller
         return back()->with('success', 'Voto registrado.');
     }
 
-    public function claimStamp($token)
-    {
-        // 1. Buscar el evento por el token secreto
-        $event = Event::where('stamp_token', $token)->firstOrFail();
-        $user =  Auth::user();
-
-        // 2. Verificar si ya tiene el stamp (para no repetir)
-        $alreadyHasStamp = \App\Models\Stamp::where('user_id', $user->id)->where('event_id', $event->id)->exists();
-
-        if ($alreadyHasStamp) {
-            return redirect()->route('events.show', $event)->with('info', 'Ya tienes el sello de este evento.');
-        }
-
-        // 3. Crear el Stamp usando tu modelo
-        \App\Models\Stamp::create([
-            'user_id'    => $user->id,
-            'event_id'   => $event->id,
-            'scanned_at' => now(),
-        ]);
-
-        return redirect()->route('events.show', $event)->with('success', '¡Sello conseguido! Se ha añadido a tu colección.');
-    }
 }

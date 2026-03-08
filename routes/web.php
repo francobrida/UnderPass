@@ -43,7 +43,5 @@ Route::middleware(['auth'])->group(function () {
     
 });
 
-Route::get('/stamps/claim/{token}', [EventController::class, 'claimStamp'])->name('events.stamp.claim')->middleware('auth');
-
 // 4. Rutas con parámetros dinámicos 
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
