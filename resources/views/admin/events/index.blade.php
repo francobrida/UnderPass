@@ -31,7 +31,6 @@
                         <th class="p-4">E-mail</th>
                         <th class="p-4">Rol</th>
                         <th class="p-4">Puntos</th>
-                        <th class="p-4">Eventos</th>
                         <th class="p-4 text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -50,7 +49,7 @@
                                 
                                 <a href="{{ route('users.edit', $user) }}" class="text-blue-500 hover:underline text-xs uppercase font-bold">Editar</a>
 
-                                <form action="{{ route('admin.destroy', $event) }}" method="POST" class="flex items-center" onsubmit="return confirm('¿Eliminar definitivamente?')">
+                                <form action="{{ route('users.destroy', $user) }}" method="POST" class="flex items-center" onsubmit="return confirm('¿Eliminar definitivamente?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:underline text-xs uppercase font-bold leading-none p-0 m-0 border-none bg-transparent">

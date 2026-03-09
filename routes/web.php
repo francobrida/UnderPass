@@ -47,3 +47,6 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
 Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
+Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
