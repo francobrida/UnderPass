@@ -38,25 +38,16 @@ class UserController extends Controller
         return redirect()->route('admin.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    /**
-     * Mostrar detalles (opcional, normalmente con edit sobra).
-     */
     public function show(User $user)
     {
         return view('admin.users.show', compact('user'));
     }
 
-    /**
-     * Editar un usuario específico.
-     */
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
-    /**
-     * Actualizar los datos del usuario.
-     */
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -80,9 +71,6 @@ class UserController extends Controller
         return redirect()->route('admin.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    /**
-     * Eliminar un usuario.
-     */
     public function destroy(User $user)
     {
         if ($user->id === Auth::id()) {
