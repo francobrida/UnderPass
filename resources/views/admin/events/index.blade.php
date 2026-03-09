@@ -18,9 +18,55 @@
             <a href="{{ route('events.create') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest transition">
                 + CREAR EVENTO
             </a>
+                        <a href="{{ route('events.create') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest transition">
+                + CREAR USUARIO
+            </a>
         </div>
 
         <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+            <table class="w-full text-left">
+                <thead class="bg-gray-800 text-gray-400 text-xs uppercase">
+                    <tr>
+                        <th class="p-4">Usuario</th>
+                        <th class="p-4">E-mail</th>
+                        <th class="p-4">Rol</th>
+                        <th class="p-4">Puntos</th>
+                        <th class="p-4">Eventos</th>
+                        <th class="p-4 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                    @foreach($users as $user)
+                    <tr class="hover:bg-gray-800/50 transition">
+                        <td class="p-4 font-bold">{{ $user->nickname }}</td>
+                        <td class="p-4 text-sm">{{ $user->email }}</td>
+                        <td class="p-4 text-sm">{{ $user->role }}</td>
+                        <td class="p-4 text-sm">{{ $user->points }}</td>
+                        
+                        <td class="p-4">
+                            <div class="flex items-center justify-center space-x-3">
+                                
+                                <a href="{{ route('users.show', $user) }}" class="text-blue-400 hover:underline text-xs uppercase font-bold">Ver</a>
+                                
+                                <a href="{{ route('users.edit', $user) }}" class="text-blue-500 hover:underline text-xs uppercase font-bold">Editar</a>
+
+                                <form action="{{ route('admin.destroy', $event) }}" method="POST" class="flex items-center" onsubmit="return confirm('¿Eliminar definitivamente?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline text-xs uppercase font-bold leading-none p-0 m-0 border-none bg-transparent">
+                                        Eliminar
+                                    </button>
+                                </form>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl mt-[18px] overflow-hidden shadow-2xl">
             <table class="w-full text-left">
                 <thead class="bg-gray-800 text-gray-400 text-xs uppercase">
                     <tr>

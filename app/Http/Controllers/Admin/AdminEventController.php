@@ -1,22 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Admin; // Mantenemos solo este
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller; // IMPORTANTE: Para que encuentre el controlador base
-use App\Models\Event;                // IMPORTANTE: Para que encuentre el modelo Event
-use App\Models\Genre;                // IMPORTANTE: Para que encuentre el modelo Genre
+use App\Http\Controllers\Controller; 
+use App\Models\Event;                
+use App\Models\Genre;              
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
-class EventController extends Controller
+class AdminEventController extends Controller
 {
     public function index()
     {
-        // CAMBIO: El admin debe ver TODOS (incluyendo los no verificados)
+        // El admin debe ver TODOS (incluyendo los no verificados)
         $events = Event::with('genres')->latest()->get();
+        $users = User::all();
 
-        return view('admin.index', compact('events'));
+        return view('admin.events.index', compact('events', 'users'));
     }
 
     public function show(Event $event)
@@ -28,12 +30,8 @@ class EventController extends Controller
     public function create()
     {
         $genres = Genre::all();
-        return view('admin.events.create', compact('genres'));
+        return view('events.create', compact('genres'));
     }
-
-    // ... resto de tus funciones (store, edit, update, destroy) ...
-    // Asegúrate de que las redirecciones en store/update/destroy 
-    // apunten a 'admin.events.index'
 
     public function store(Request $request)
     {
@@ -50,8 +48,8 @@ class EventController extends Controller
             'location_name' => 'required|string|max:100',
             'flyer' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'neighborhood'  => 'required|string|max:100',
-            'genres' => 'required|array|min:1', // Al menos un género seleccionado
-            'genres.*' => 'exists:genres,id',    // Verifica que el ID existe en la tabla genres
+            'genres' => 'required|array|min:1', 
+            'genres.*' => 'exists:genres,id',   
         ]);
 
         if (empty($validated['price_info'])) {
@@ -128,20 +126,5 @@ class EventController extends Controller
 
         abort(403);
     }
-
-    /*
-    public function adminIndex()
-    {
-        // Usamos Auth::user() en lugar de auth()->user()
-        $user = Auth::user();
-
-        if (!$user || $user->role !== 'admin') {
-            return redirect('/')->with('error', 'No tienes permiso');
-        }
-
-        $events = Event::all();
-        return view('admin.index', compact('events'));
-    }
-*/
 
 }
