@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StampController;
 use App\Http\Controllers\Admin\AdminEventController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\VibeCheckController;
 
 require __DIR__.'/auth.php';
 
@@ -40,10 +41,15 @@ Route::middleware(['auth'])->group(function () {
     // VOUCH
     Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
 
-    // VIBECHECK
-    Route::get('/vibecheck/{event}', [StampController::class, 'vibecheckForm'])->name('events.vibecheck');
-    
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vibecheck/{event}', [VibeCheckController::class, 'create'])->name('events.vibecheck');
+    Route::post('/vibecheck/{event}', [VibeCheckController::class, 'store'])->name('events.vibecheck.store');
+});
+
+// Rutas dinámicas SIEMPRE al final
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 // DYNAMIC ROUTES (ALWAYS AT THE END)
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');

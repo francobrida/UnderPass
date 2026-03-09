@@ -15,6 +15,21 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
+        @if (session('success'))
+            <div class="max-w-7xl mx-auto mt-4 px-4">
+                <div class="bg-green-900/50 border border-green-500 text-green-200 p-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div class="max-w-7xl mx-auto mt-4 px-4">
+                <div class="bg-blue-900/50 border border-blue-500 text-blue-200 p-4 rounded-xl font-bold uppercase text-xs tracking-widest">
+                    {{ session('info') }}
+                </div>
+            </div>
+        @endif
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 

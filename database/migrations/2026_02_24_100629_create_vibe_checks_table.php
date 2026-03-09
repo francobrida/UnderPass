@@ -18,7 +18,7 @@ return new class extends Migration
         $table->integer('sound_score');
         $table->integer('safe_space_score');
         $table->text('comment');
-        $table->timestamp('created_at')->useCurrent(); // creates created_at with current timestamp
+        $table->timestamp('created_at')->useCurrent(); 
         $table->timestamp('updated_at')->nullable();
         });
     }

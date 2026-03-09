@@ -54,7 +54,6 @@
                             <td class="p-4 text-center font-mono text-purple-400">{{ $user->points }}</td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center space-x-4">
-                                    <a href="{{ route('users.show', $user) }}" class="text-gray-400 hover:text-white font-bold text-[10px] uppercase tracking-tighter">Ver</a>
                                     <a href="{{ route('users.edit', $user) }}" class="text-blue-400 hover:text-blue-300 font-bold text-[10px] uppercase tracking-tighter">Editar</a>
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('¿Borrar usuario?')">
                                         @csrf @method('DELETE')
