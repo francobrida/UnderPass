@@ -11,8 +11,8 @@
         
         <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
             <div>
-                <h1 class="text-3xl font-black text-white uppercase italic tracking-tighter">
-                    Under<span class="text-purple-500 text-glow">Pass</span> <span class="text-sm font-light text-gray-500 ml-2 italic">Admin Control</span>
+                <h1 class="text-3xl font-black text-white uppercase italic tracking-tighter cursor-pointer" onclick="window.location='/'">
+                    Under<span class="text-purple-500 text-glow">Pass</span> <span class="text-sm font-light text-gray-500 ml-2 italic ">Admin Control</span>
                 </h1>
             </div>
             <div class="flex space-x-3">

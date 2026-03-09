@@ -12,7 +12,7 @@ require __DIR__.'/auth.php';
 Route::get('/', [EventController::class, 'index'])->name('events.index');
 Route::get('/events', [EventController::class, 'index']);
 
-// 3. Rutas protegidas (Usuarios normales)
+// clubbers
 Route::middleware('auth')->group(function () {
     Route::resource('events', EventController::class)->except(['index', 'show']); 
     Route::get('/my-events', [EventController::class, 'myEvents'])->name('events.my'); 
@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/my-stamps', [StampController::class, 'stamps'])->name('user.stamps');
 Route::get('/stamps/claim/{token}', [StampController::class, 'claim'])->name('events.stamp.claim');
 
-// Rutas de administración
+// ADMIN
 Route::get('/panel-admin', [AdminEventController::class, 'index'])->name('admin.index')->middleware('auth');
 Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy')->middleware('auth');
 // User creation
@@ -34,22 +34,22 @@ Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.user
 
 Route::middleware(['auth'])->group(function () {
     
-    // Vista de la "Sala de Espera"
+    // WAITING ROOM
     Route::get('/waiting-room', [EventController::class, 'waitingRoom'])->name('events.waiting-room');
 
-    // Acción de dar Vouch
+    // VOUCH
     Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
 
-    // Vibecheck
+    // VIBECHECK
     Route::get('/vibecheck/{event}', [StampController::class, 'vibecheckForm'])->name('events.vibecheck');
     
 });
 
-// 4. Rutas con parámetros dinámicos 
+// DYNAMIC ROUTES (ALWAYS AT THE END)
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
 Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
 Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-
+Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('auth');
