@@ -20,15 +20,15 @@
             <p class="text-zinc-500 text-xs uppercase tracking-widest mt-2">Historial de asistencia verificado en la red UnderPass.</p>
         </header>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
             @if(count($stamps) > 0)
                 @foreach($stamps as $stamp)
                     <div class="group relative aspect-ratio-1/2 border border-white/10 bg-zinc-900 overflow-hidden">
 
-                        <div class="relative h-full p-6 flex flex-col justify-between z-10">
+                        <div class="relative h-full p-7 flex flex-col justify-between z-10 ">
                             <div>
                                 <h3 class="text-m font-black uppercase leading-tight mb-1">{{ $stamp->event->title }}</h3>
-                                <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">
+                                <p class="text-[10px] text-zinc-500 uppercase pb-3 tracking-widest font-bold">
                                     {{ \Carbon\Carbon::parse($stamp->scanned_at)->format('d.m.y') }}
                                 </p>
                             </div>

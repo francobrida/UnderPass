@@ -64,7 +64,6 @@ class EventController extends Controller
 
     public function myEvents(Request $request)
     {
-        // Usamos $request->user(), que es lo mismo pero el editor lo entiende mejor
         $user = $request->user();
 
         if (!$user) {
@@ -97,7 +96,7 @@ class EventController extends Controller
             'location_name' => 'required|string|max:100',
             'flyer' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'neighborhood'  => 'required|string|max:100',
-            'genres' => 'required|array|min:1', // Al menos un género seleccionado
+            'genres' => 'required|array|min:1', 
             'genres.*' => 'exists:genres,id',    // Verifica que el ID existe en la tabla genres
         ]);
 
@@ -197,7 +196,7 @@ class EventController extends Controller
 
         return redirect()->route('events.my')->with('success', 'Evento eliminado.');
     }
-
+    /*
     public function adminIndex()
     {
         $user = Auth::user();
@@ -209,7 +208,7 @@ class EventController extends Controller
         $events = Event::all();
         return view('admin.events.index', compact('events'));
     }
-
+    */
     public function waitingRoom()
     {
         $events = Event::where('is_verified', false) 
