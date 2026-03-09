@@ -9,7 +9,7 @@
                     
                     <form action="{{ route('events.update', $event) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
-                        @method('PUT') <div x-data="{ imageUrl: '{{ $event->flyer_path ? asset('storage/' . $event->flyer_path) : null }}' }">
+                        @method('PUT') <div x-data="{ imageUrl: '{{ $event->flyer ? asset('storage/' . $event->flyer) : null }}' }">
                             <label class="block text-xs font-bold text-purple-400 uppercase mb-2">Flyer del Evento</label>
                             
                             <div class="flex flex-col items-center justify-center w-full">
