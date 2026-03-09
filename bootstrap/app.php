@@ -14,5 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+            // Cuando ocurra un NotFoundHttpException (un 404)
+            $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, $request) {
+                return response()->view('errors.404', [], 404);
+            });
     })->create();

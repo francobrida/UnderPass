@@ -28,6 +28,9 @@ Route::get('/stamps/claim/{token}', [StampController::class, 'claim'])->name('ev
 // Rutas de administración
 Route::get('/panel-admin', [AdminEventController::class, 'index'])->name('admin.index')->middleware('auth');
 Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy')->middleware('auth');
+// User creation
+Route::get('/admin/create', [UserController::class, 'create'])->name('users.create')->middleware('auth');
+Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.users.store')->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     
