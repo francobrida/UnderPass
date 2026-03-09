@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(); // this creates the relationship with the users table (organizer)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title', 100);
             $table->text('lineup');
             $table->text('description');

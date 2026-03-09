@@ -78,7 +78,6 @@ class User extends Authenticatable
     return $this->hasMany(Stamp::class);
     }
 
-    // An user can create many events, but an event belongs to one user (the organizer)
     public function events() {
         return $this->hasMany(Event::class);
     }

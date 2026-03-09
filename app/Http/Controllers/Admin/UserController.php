@@ -11,16 +11,6 @@ use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-   /*
-    public function index()
-    {
-        $users = User::all(); 
-        return view('admin.users.index', compact('users'));
-    }
-
-    /**
-     * Formulario para crear un nuevo usuario manualmente.
-     */
     public function create()
     {
         return view('admin.users.create');
@@ -32,7 +22,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'nickname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:admin,clubber,organizer'] 
@@ -45,52 +35,42 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.events.index')->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('admin.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    /**
-     * Mostrar detalles (opcional, normalmente con edit sobra).
-     */
     public function show(User $user)
     {
         return view('admin.users.show', compact('user'));
     }
 
-    /**
-     * Editar un usuario específico.
-     */
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
-    /**
-     * Actualizar los datos del usuario.
-     */
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'nickname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'string'],
+            'role' => ['required', 'in:admin,clubber,organizer'],
+            'points' => ['nullable', 'integer', 'min:0'],
+            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'avatar' => ['nullable', 'image', 'max:2048'], // 2MB max ?
         ]);
 
-        $user->fill($request->only('name', 'email', 'role'));
+        $user->fill($request->only('nickname', 'email', 'role', 'points'));
 
-        // Solo actualizamos el password si el admin escribió algo en el campo
-        if ($request->filled('password')) {
-            $request->validate(['password' => ['confirmed', Rules\Password::defaults()]]);
-            $user->password = Hash::make($request->password);
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
         }
 
         $user->save();
 
-        return redirect()->route('admin.events.index')->with('success', 'Usuario actualizado.');
+        return redirect()->route('admin.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    /**
-     * Eliminar un usuario.
-     */
     public function destroy(User $user)
     {
         if ($user->id === Auth::id()) {
@@ -99,6 +79,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.events.index')->with('success', 'Usuario eliminado.');
+        return redirect()->route('admin.index')->with('success', 'Usuario eliminado.');
     }
 }
