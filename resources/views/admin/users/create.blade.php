@@ -27,10 +27,8 @@
                                     <div x-show="!imageUrl" class="flex flex-col items-center">
                                         <span class="text-sm font-bold uppercase tracking-widest">Subir Foto</span>
                                     </div>
-                                    
                                     <input type="file" name="avatar" class="hidden" accept="image/*" 
                                         @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
-                                    
                                     <template x-if="imageUrl">
                                         <div class="relative">
                                             <img :src="imageUrl" class="rounded-full h-32 w-32 object-cover shadow-2xl border-2 border-purple-500">
@@ -79,10 +77,9 @@
                         </div>
 
                         <div>
-                            <form>
-                                <label for="points" class="block text-xs font-bold text-purple-400 uppercase mb-2">Points:</label>
-                                <input type="number" id="points" name="cantidad">
-                            </form>
+                            <label for="points" class="block text-xs font-bold text-purple-400 uppercase mb-2">Points:</label>
+                            <input type="number" id="points" name="points" value="{{ old('points', 0) }}"
+                                class="w-full bg-gray-800 border-gray-700 text-white rounded-xl focus:ring-purple-500 focus:border-purple-500 transition shadow-inner">
                         </div>
 
                         <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-800">
@@ -91,8 +88,8 @@
                                 Crear Usuario
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </form> 
+                    </div>
             </div>
         </div>
     </div>

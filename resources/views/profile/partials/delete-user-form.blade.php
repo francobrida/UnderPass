@@ -27,7 +27,7 @@
             </h2>
 
             <p class="mt-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-relaxed">
-                {{ __('Esta acción es irreversible. Por favor, introduce tu contraseña para confirmar que deseas eliminar permanentemente tu acceso a UnderPass.') }}
+                {{ __('Esta acción es irreversible. Por favor, introduce tu contraseña para confirmar que deseas eliminar permanentemente tu acceso a UnderPass, incluyendo tus eventos y puntos.') }}
             </p>
 
             <div class="mt-6">

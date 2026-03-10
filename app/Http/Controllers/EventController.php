@@ -223,22 +223,26 @@ class EventController extends Controller
     {
         $user = Auth::user();
 
-        // 1. No auto-vouch
         if ($event->user_id === $user->id) {
             return back()->with('error', 'No puedes votar tu propio evento.');
         }
 
-        // 2. Avoid duplicate vouches
         if ($event->vouches()->where('user_id', $user->id)->exists()) {
             return back()->with('info', 'Ya has dado tu fe por este evento.');
         }
 
-        // 3. Registrar el voto (usamos attach para la tabla pivote)
+        // Register the vouch
         $event->vouches()->attach($user->id);
 
-        // 4. logic to check if event should be verified
+        // Verification
         if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
             $event->update(['is_verified' => true]);
+
+            if ($event->user->role->value === 'clubber') {
+                $event->user->role = 'organizer';
+                $event->user->save(); // Saves in the DB
+            }
+
             return redirect()->route('events.index')
                 ->with('success', '¡Evento verificado! Ahora es visible para todos.');
         }

@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy');
     // User creation
     Route::get('/admin/create', [UserController::class, 'create'])->name('users.create');
-    Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.users.store');
+    Route::post('/admin/store', [UserController::class, 'store'])->name('admin.users.store');
 
     // WAITING ROOM
     Route::get('/waiting-room', [EventController::class, 'waitingRoom'])->name('events.waiting-room');
