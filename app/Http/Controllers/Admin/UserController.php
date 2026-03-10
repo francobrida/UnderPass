@@ -16,9 +16,6 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    /**
-     * Guardar el nuevo usuario.
-     */
     public function store(Request $request)
     {
         $request->validate([

@@ -12,9 +12,19 @@
         <a href="{{ route('events.index') }}" class="text-xl font-black tracking-tighter uppercase italic">
             Under<span class="text-purple-500">Pass</span>
         </a>
+        <div class="flex items-center gap-2">
+            <span class="text-[20px] uppercase tracking-widest text-zinc-500 font-bold">Puntos: {{ auth()->user()->points ?? 0 }}</span>
+        </div>
     </nav>
 
     <main class="max-w-6xl mx-auto px-6 py-12">
+        
+        @if (session('success'))
+            <div class="mb-8 p-4 bg-purple-900/30 border border-purple-500 text-purple-200 text-xs font-bold uppercase tracking-widest rounded-lg animate-pulse">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <header class="mb-12">
             <h1 class="text-5xl font-black uppercase tracking-tighter italic">Mis Sellos</h1>
             <p class="text-zinc-500 text-xs uppercase tracking-widest mt-2">Historial de asistencia verificado en la red UnderPass.</p>
@@ -35,23 +45,30 @@
 
                             @php
                                 $eventEnd = \Carbon\Carbon::parse($stamp->event->date . ' ' . $stamp->event->end_time);
-                                $canVibeCheck = now()->greaterThan($eventEnd->addHours(6)); 
+                                $canVibeCheck = now()->greaterThan($eventEnd->addHours(6)); // sorry, a bit hardcoded
+                                $alreadyVoted = $stamp->event->vibeChecks->where('user_id', auth()->id())->isNotEmpty();
                             @endphp
 
-                            @if($canVibeCheck)
-                                <a href="{{ route('events.vibecheck', $stamp->event->id) }}" 
-                                class="inline-block py-2 bg-purple-600 text-[9px] font-black uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors">
-                                    Vibecheck Disponible
-                                </a>
-                            @else
-                                <div class="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                                    Vibecheck próximamente...
-                                </div>
-                            @endif
+                            <div class="mt-4">
+                                @if($alreadyVoted)
+                                    <div class="w-full py-2 bg-zinc-800 text-zinc-600 text-[9px] font-black uppercase tracking-widest text-center border border-white/5">
+                                        ✓ Vibecheck Realizado
+                                    </div>
+                                @elseif($canVibeCheck)
+                                    <a href="{{ route('events.vibecheck', $stamp->event->id) }}" 
+                                    class="block w-full py-2 bg-purple-600 text-[9px] font-black uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors">
+                                        Vibecheck Disponible
+                                    </a>
+                                @else
+                                    <div class="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
+                                        Vibecheck próximamente...
+                                    </div>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="absolute -bottom-4 -right-4 w-24 h-24 border-4 border-purple-500/20 rounded-full flex items-center justify-center rotate-12 pointer-events-none group-hover:border-purple-500/40 transition-colors">
-                            <span class="text-[16px] font-black text-purple-500/20 uppercase tracking-tighter italic ">OK</span>
+                            <span class="text-[16px] font-black text-purple-500/20 uppercase tracking-tighter italic">OK</span>
                         </div>
                     </div>
                 @endforeach
