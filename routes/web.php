@@ -13,28 +13,25 @@ require __DIR__.'/auth.php';
 Route::get('/', [EventController::class, 'index'])->name('events.index');
 Route::get('/events', [EventController::class, 'index']);
 
-// clubbers
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
+    // clubbers
     Route::resource('events', EventController::class)->except(['index', 'show']); 
     Route::get('/my-events', [EventController::class, 'myEvents'])->name('events.my'); 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-Route::get('/my-stamps', [StampController::class, 'stamps'])->name('user.stamps');
-Route::get('/stamps/claim/{token}', [StampController::class, 'claim'])->name('events.stamp.claim');
+    Route::get('/my-stamps', [StampController::class, 'stamps'])->name('user.stamps');
+    Route::get('/stamps/claim/{token}', [StampController::class, 'claim'])->name('events.stamp.claim');
 
-// ADMIN
-Route::get('/panel-admin', [AdminEventController::class, 'index'])->name('admin.index')->middleware('auth');
-Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy')->middleware('auth');
-// User creation
-Route::get('/admin/create', [UserController::class, 'create'])->name('users.create')->middleware('auth');
-Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.users.store')->middleware('auth');
+    // ADMIN
+    Route::get('/panel-admin', [AdminEventController::class, 'index'])->name('admin.index');
+    Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy');
+    // User creation
+    Route::get('/admin/create', [UserController::class, 'create'])->name('users.create');
+    Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.users.store');
 
-Route::middleware(['auth'])->group(function () {
-    
     // WAITING ROOM
     Route::get('/waiting-room', [EventController::class, 'waitingRoom'])->name('events.waiting-room');
 
