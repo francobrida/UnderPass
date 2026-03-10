@@ -25,7 +25,6 @@
                             <div class="flex flex-col items-center justify-center w-full">
                                 <label class="w-full flex flex-col items-center px-4 py-6 bg-gray-800 text-purple-400 rounded-xl border-2 border-dashed border-purple-900/50 cursor-pointer hover:border-purple-500 transition shadow-inner">
                                     <div x-show="!imageUrl" class="flex flex-col items-center">
-                                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         <span class="text-sm font-bold uppercase tracking-widest">Subir Foto</span>
                                     </div>
                                     
