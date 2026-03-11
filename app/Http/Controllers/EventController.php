@@ -20,7 +20,7 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $genres = \App\Models\Genre::all();
-        $events = $this->eventService->filterEvents($request);
+        $events = $this->eventService->filter($request);
         return view('events.index', compact('events', 'genres'));
     }
 
@@ -69,7 +69,6 @@ class EventController extends Controller
             $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
         }
 
-        // Gestión de la imagen
         if ($request->hasFile('flyer')) {
             $path = $request->file('flyer')->store('flyers', 'public');
             $validated['flyer'] = $path;
@@ -98,8 +97,7 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event) 
     {
-        // --- SEGURIDAD MANUAL ---
-        // Verificamos si el usuario logueado es el dueño antes de actualizar
+        
         if ($event->user_id !== Auth::id() && $request->user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para actualizar este evento.');
         }

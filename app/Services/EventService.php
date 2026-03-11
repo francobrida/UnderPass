@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class EventService {
 
-    public function filterEvents(Request $request) {
+    public function filter(Request $request) {
 
         // 1. Iniciamos la consulta: verificados Y que no hayan pasado de fecha
         $query = Event::with('genres')
@@ -51,4 +51,15 @@ class EventService {
         return $events;
     }
 
+    public function processFlyer(Event $event, Request $request) {
+
+        if ($request->hasFile('flyer')) {
+            
+            if ($event->flyer) {
+                Storage::disk('public')->delete($event->flyer);
+            }
+
+            $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
+        }
+    }
 }
