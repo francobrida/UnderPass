@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    public const int VOUCHES_TO_VERIFY = 3;
+    public const int VOUCHES_TO_VERIFY = 1;
 
     public function __construct(
         private EventService $eventService
@@ -119,6 +119,10 @@ class EventController extends Controller
             'is_verified' => 'nullable|boolean'
         ]);
 
+        if (empty($validated['price_info'])) {
+            $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
+        }
+
         if ($request->user()->role->value === 'admin') {
             $validated['is_verified'] = $request->has('is_verified');
         }
@@ -171,6 +175,8 @@ class EventController extends Controller
     public function vouch(Event $event)
     {
         $user = Auth::user();
+        
+        $event->load('organizer'); 
 
         if ($event->user_id === $user->id) {
             return back()->with('error', 'No puedes votar tu propio evento.');
@@ -180,16 +186,19 @@ class EventController extends Controller
             return back()->with('info', 'Ya has dado tu fe por este evento.');
         }
 
-        // Register the vouch
+        // Registrar el voto
         $event->vouches()->attach($user->id);
 
-        // Verification
+        // 2. Verificación del umbral
         if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
             $event->update(['is_verified' => true]);
 
-            if ($event->user->role->value === 'clubber') {
-                $event->user->role = 'organizer';
-                $event->user->save(); // Saves in the DB
+            // 3. Accedemos a través de 'organizer'
+            $eventOwner = $event->organizer; 
+
+            if ($eventOwner && $eventOwner->role->value === 'clubber') {
+                // Usamos update() para forzar la persistencia inmediata
+                $eventOwner->update(['role' => 'organizer']);
             }
 
             return redirect()->route('events.index')

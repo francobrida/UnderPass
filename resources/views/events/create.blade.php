@@ -28,10 +28,8 @@
                                         <span class="text-2xl mb-2">📸</span>
                                         <span class="text-[10px] font-bold uppercase tracking-widest">Click para subir imagen</span>
                                     </div>
-                                    
                                     <input type="file" name="flyer" class="hidden" accept="image/*" 
                                         @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
-                                    
                                     <template x-if="imageUrl">
                                         <div class="relative w-full">
                                             <img :src="imageUrl" class="rounded-lg max-h-60 w-full object-cover border border-purple-500">
@@ -68,6 +66,13 @@
                             <input type="text" name="lineup" id="lineup" value="{{ old('lineup') }}" 
                                 class="w-full bg-black border-gray-800 text-white rounded-lg text-sm"
                                 placeholder="DJ 1, DJ 2...">
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-[10px] font-bold text-gray-500 uppercase mb-2">📝 Descripción</label>
+                            <textarea name="description" id="description" rows="4" 
+                                class="w-full bg-black border-gray-800 text-white rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm placeholder-zinc-700"
+                                placeholder="Detalles de la fiesta, dresscode, etc...">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

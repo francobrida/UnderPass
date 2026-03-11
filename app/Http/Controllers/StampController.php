@@ -14,12 +14,13 @@ class StampController extends Controller
      */
     public function stamps()
     {
+        $user = Auth::user();
         $stamps = Stamp::where('user_id', Auth::id())
             ->with('event') // Carga el evento para evitar consultas extra (Eager Loading)
             ->latest('scanned_at')
             ->get();
 
-        return view('profile.stamps', compact('stamps'));
+        return view('profile.stamps', compact('stamps', 'user'));
     }
 
     /**

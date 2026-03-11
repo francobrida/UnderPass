@@ -12,6 +12,8 @@
         <a href="{{ route('events.index') }}" class="text-xl font-black tracking-tighter uppercase italic">
             Under<span class="text-purple-500">Pass</span>
         </a>
+
+        <p class="text-2xl font-black uppercase tracking-tighter italic">Mis Puntos: {{ $user->points }}</p>
     </nav>
 
     <main class="max-w-6xl mx-auto px-6 py-12">
