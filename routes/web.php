@@ -10,10 +10,10 @@ use App\Http\Controllers\VibeCheckController;
 
 require __DIR__.'/auth.php';
 
-Route::get('/', [EventController::class, 'index'])->name('events.index');
-Route::get('/events', [EventController::class, 'index']);
-
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events', [EventController::class, 'index']);
     // clubbers
     Route::resource('events', EventController::class)->except(['index', 'show']); 
     Route::get('/my-events', [EventController::class, 'myEvents'])->name('events.my'); 
@@ -28,9 +28,9 @@ Route::middleware(['auth'])->group(function () {
     // ADMIN
     Route::get('/panel-admin', [AdminEventController::class, 'index'])->name('admin.index');
     Route::delete('/admin/eventos/{event}', [EventController::class, 'destroy'])->name('admin.destroy');
-    // User creation
+    // USER CREATION
     Route::get('/admin/create', [UserController::class, 'create'])->name('users.create');
-    Route::patch('/admin/store', [UserController::class, 'store'])->name('admin.users.store');
+    Route::post('/admin/store', [UserController::class, 'store'])->name('admin.users.store');
 
     // WAITING ROOM
     Route::get('/waiting-room', [EventController::class, 'waitingRoom'])->name('events.waiting-room');
@@ -38,21 +38,17 @@ Route::middleware(['auth'])->group(function () {
     // VOUCH
     Route::post('/events/{event}/vouch', [EventController::class, 'vouch'])->name('events.vouch');
 
-});
-
-Route::middleware(['auth'])->group(function () {
+    // VIBECHECK
     Route::get('/vibecheck/{event}', [VibeCheckController::class, 'create'])->name('events.vibecheck');
     Route::post('/vibecheck/{event}', [VibeCheckController::class, 'store'])->name('events.vibecheck.store');
+
+    // DYNAMIC ROUTES (ALWAYS AT THE END)
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+
+    Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        
 });
 
-// Rutas dinámicas SIEMPRE al final
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
-
-// DYNAMIC ROUTES (ALWAYS AT THE END)
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
-Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-
-Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
-Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('auth');

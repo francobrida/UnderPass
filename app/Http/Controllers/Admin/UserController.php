@@ -26,7 +26,7 @@ class UserController extends Controller
         ]);
 
         User::create([
-            'name' => $request->name,
+            'nickname' => $request->nickname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
@@ -47,6 +47,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        
         $request->validate([
             'nickname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],

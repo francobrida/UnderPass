@@ -73,6 +73,19 @@
                     <h1 class="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] text-white mb-6">
                         {{ $event->title }}
                     </h1>
+
+                    <div class="py-4 border-t border-zinc-800 mb-6">
+                        <h4 class="text-[7px] font-black text-zinc-600 uppercase tracking-[0.3em] mb-1 italic">// Host</h4>
+                        <p class="text-sm font-bold text-white uppercase tracking-tighter">
+                            @if($event->organizer)
+                              <h4  class="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                                {{ $event->organizer->nickname ?? $event->organizer->nickname }}
+                                </h4>
+                            @else
+                                <span class="text-zinc-500 italic">Organizador no disponible</span>
+                            @endif
+                        </p>
+                    </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold uppercase tracking-widest text-zinc-400">
                         <div class="flex items-center"><span class="text-purple-500 mr-3">📅</span> {{ \Carbon\Carbon::parse($event->date)->format('d . m . Y') }}</div>

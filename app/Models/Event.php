@@ -46,7 +46,7 @@ class Event extends Model
 
         static::creating(function ($event) {
             $event->stamp_token = Str::random(32); /* this generates a unique random token for the event, 
-             which will be used for claiming stamps */
+             which will be converted into a QR code for claiming stamps */
         });
     }
 
