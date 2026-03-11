@@ -16,9 +16,7 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    /**
-     * Guardar el nuevo usuario.
-     */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -50,6 +48,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        
         $request->validate([
             'nickname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],

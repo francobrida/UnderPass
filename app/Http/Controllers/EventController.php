@@ -6,69 +6,33 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Genre;
+use App\Services\EventService;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
     public const int VOUCHES_TO_VERIFY = 3;
 
+    public function __construct(
+        private EventService $eventService
+    ){}
+
     public function index(Request $request)
     {
         $genres = \App\Models\Genre::all();
-
-        // 1. Iniciamos la consulta: verificados Y que no hayan pasado de fecha
-        $query = Event::with('genres')
-            ->where('is_verified', true)
-            ->where('date', '>=', now()->toDateString()); // <--- ESTO: Solo hoy o futuro
-
-        // 2. Filtro por nombre o lineup
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('lineup', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // 3. Filtro por Barrio
-        if ($request->filled('neighborhood')) {
-            $query->where('neighborhood', $request->neighborhood);
-        }
-
-        // 4. Filtro por Estilo (Género)
-        if ($request->filled('genre')) {
-            $query->whereHas('genres', function($q) use ($request) {
-                $q->where('genres.id', $request->genre);
-            });
-        }
-
-        // 5. Ordenar por Precio
-        if ($request->price === 'asc') {
-            $query->orderBy('price', 'asc');
-        } elseif ($request->price === 'desc') {
-            $query->orderBy('price', 'desc');
-        } else {
-            $query->orderBy('date', 'asc');
-        }
-
-        $events = $query->get();
-
+        $events = $this->eventService->filterEvents($request);
         return view('events.index', compact('events', 'genres'));
     }
 
     public function show(Event $event)
     {
         $event->load(['genres', 'organizer']);
-
         return view('events.show', compact('event')); 
     }
 
     public function myEvents(Request $request)
     {
         $user = $request->user();
-
-        if (!$user) {
-            return redirect()->route('login');
-        }
    
         $events = $user->events()->latest()->get();
 
@@ -96,6 +60,7 @@ class EventController extends Controller
             'location_name' => 'required|string|max:100',
             'flyer' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'neighborhood'  => 'required|string|max:100',
+            'is_verified' => 'nullable|boolean',
             'genres' => 'required|array|min:1', 
             'genres.*' => 'exists:genres,id',    // Verifica que el ID existe en la tabla genres
         ]);
@@ -111,7 +76,7 @@ class EventController extends Controller
         }
 
         $event = $request->user()->events()->create($validated);
-        // Sincronizamos con la tabla intermedia 'event_genre'
+       
         $event->genres()->attach($request->genres);
 
         return redirect()->route('events.my')->with('success', 'Evento creado. Esperando verificaciones! 0/3');
@@ -125,7 +90,6 @@ class EventController extends Controller
         if ($event->user_id !== Auth::id() && Auth::user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para editar este evento.');
         }
-        // ------------------------
 
         $genres = Genre::all();
         
@@ -139,7 +103,6 @@ class EventController extends Controller
         if ($event->user_id !== Auth::id() && $request->user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para actualizar este evento.');
         }
-        // ------------------------
 
         // 1. Validar todos los campos del formulario
         $validated = $request->validate([
@@ -194,21 +157,9 @@ class EventController extends Controller
 
         $event->delete();
 
-        return redirect()->route('events.my')->with('success', 'Evento eliminado.');
+        return back()->with('success', 'Evento eliminado.');
     }
-    /*
-    public function adminIndex()
-    {
-        $user = Auth::user();
-
-        if ($user->role->value !== 'admin') {
-            return redirect('/')->with('error', 'No tienes permiso de admin');
-        }
-
-        $events = Event::all();
-        return view('admin.events.index', compact('events'));
-    }
-    */
+    
     public function waitingRoom()
     {
         $events = Event::where('is_verified', false) 

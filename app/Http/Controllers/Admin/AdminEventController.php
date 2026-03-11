@@ -12,11 +12,13 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminEventController extends Controller
 {
-    public function index()
+   public function index()
     {
-        // El admin debe ver TODOS (incluyendo los no verificados)
+        // El admin debe ver TODOS los eventos
         $events = Event::with('genres')->latest()->get();
-        $users = User::all();
+
+        // Obtenemos todos los usuarios EXCEPTO el autenticado
+        $users = User::where('id', '!=', Auth::id())->latest()->get();
 
         return view('admin.events.index', compact('events', 'users'));
     }
@@ -56,14 +58,13 @@ class AdminEventController extends Controller
             $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
         }
 
-        // Gestión de la imagen
         if ($request->hasFile('flyer')) {
             $path = $request->file('flyer')->store('flyers', 'public');
             $validated['flyer'] = $path;
         }
 
         $event = $request->user()->events()->create($validated);
-        // Sincronizamos con la tabla intermedia 'event_genre'
+        // Sinc with pivot table
         $event->genres()->attach($request->genres);
 
         return redirect()->route('admin.index')->with('success', 'Evento creado. Esperando verificaciones! 0/3');
@@ -80,7 +81,6 @@ class AdminEventController extends Controller
     public function update(Request $request, Event $event) 
     {
 
-        // 1. Validar todos los campos del formulario
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -96,20 +96,18 @@ class AdminEventController extends Controller
             'ticket_link' => 'nullable|url',
         ]);
 
-        // 2. Gestión de la imagen (Flyer)
+    
         if ($request->hasFile('flyer')) {
-            // Borrar el archivo viejo si existe
+            
             if ($event->flyer) {
                 Storage::disk('public')->delete($event->flyer);
             }
-            // Guardar el archivo nuevo
+            
             $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
         }
 
-        // 3. Actualizar los datos del evento
         $event->update($validated);
 
-        // 4. Sincronizar géneros (tabla intermedia)
         $event->genres()->sync($request->genres);
 
         return redirect()->route('admin.index')->with('success', 'Evento actualizado por el administrador.');
@@ -118,8 +116,8 @@ class AdminEventController extends Controller
     public function destroy(Event $event) 
     {
         $user = Auth::user();
-        // Solo permitimos borrar si: es el dueño O es admin
-        if ($user->id === $event->user_id || $user->role === 'admin') {
+
+        if ($user->id === $event->user_id || $user->role->value === 'admin') {
             $event->delete();
             return back()->with('success', 'Borrado con éxito');
         }
