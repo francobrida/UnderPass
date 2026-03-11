@@ -16,7 +16,6 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
