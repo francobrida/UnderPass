@@ -9,16 +9,18 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
 
+
 class EventService {
+
+    public const int VOUCHES_TO_VERIFY = 3;
 
     public function filter(Request $request) {
 
-        // 1. Iniciamos la consulta: verificados Y que no hayan pasado de fecha
         $query = Event::with('genres')
             ->where('is_verified', true)
-            ->where('date', '>=', now()->toDateString()); // <--- ESTO: Solo hoy o futuro
+            ->where('date', '>=', now()->toDateString()); // only future events
 
-        // 2. Filtro por nombre o lineup
+        // Filter by name or lineup
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
@@ -26,19 +28,19 @@ class EventService {
             });
         }
 
-        // 3. Filtro por Barrio
+        // Filter by neighborhood
         if ($request->filled('neighborhood')) {
             $query->where('neighborhood', $request->neighborhood);
         }
 
-        // 4. Filtro por Estilo (Género)
+        // Filter by genre
         if ($request->filled('genre')) {
             $query->whereHas('genres', function($q) use ($request) {
                 $q->where('genres.id', $request->genre);
             });
         }
 
-        // 5. Ordenar por Precio
+        // Order by price
         if ($request->price === 'asc') {
             $query->orderBy('price', 'asc');
         } elseif ($request->price === 'desc') {
@@ -59,7 +61,34 @@ class EventService {
                 Storage::disk('public')->delete($event->flyer);
             }
 
-            $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
+            return $request->file('flyer')->store('flyers', 'public');
         }
+    }
+
+    public function processPriceInfo(array $validated) {
+
+        if (empty($validated['price_info'])) {
+            return $validated['price'] == 0 ? 'Entrada gratuita' : '';
+        }
+
+    }
+
+    public function verifyEvent(Event $event) : bool {
+
+        if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
+            $event->update(['is_verified' => true]);
+
+            $eventOwner = $event->organizer; 
+
+            if ($eventOwner && $eventOwner->role->value === 'clubber') {
+                
+                $eventOwner->update(['role' => 'organizer']);
+            }
+            return true;
+            
+        } else {
+            return false;
+        }
+        
     }
 }

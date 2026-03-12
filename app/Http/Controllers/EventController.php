@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    public const int VOUCHES_TO_VERIFY = 1;
-
     public function __construct(
         private EventService $eventService
     ){}
@@ -62,12 +60,10 @@ class EventController extends Controller
             'neighborhood'  => 'required|string|max:100',
             'is_verified' => 'nullable|boolean',
             'genres' => 'required|array|min:1', 
-            'genres.*' => 'exists:genres,id',    // Verifica que el ID existe en la tabla genres
+            'genres.*' => 'exists:genres,id',
         ]);
 
-        if (empty($validated['price_info'])) {
-            $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
-        }
+        $validated['price_info'] = $this->eventService->processPriceInfo($validated);
 
         if ($request->hasFile('flyer')) {
             $path = $request->file('flyer')->store('flyers', 'public');
@@ -84,8 +80,6 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        // --- SEGURIDAD MANUAL ---
-        // Verificamos si el usuario logueado es el dueño del evento
         if ($event->user_id !== Auth::id() && Auth::user()->role->value !== 'admin') {
             abort(403, 'No tienes permiso para editar este evento.');
         }
@@ -102,7 +96,6 @@ class EventController extends Controller
             abort(403, 'No tienes permiso para actualizar este evento.');
         }
 
-        // 1. Validar todos los campos del formulario
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -119,29 +112,17 @@ class EventController extends Controller
             'is_verified' => 'nullable|boolean'
         ]);
 
-        if (empty($validated['price_info'])) {
-            $validated['price_info'] = $validated['price'] == 0 ? 'Entrada gratuita' : '';
-        }
+        $validated['price_info'] = $this->eventService->processPriceInfo($validated);
 
         if ($request->user()->role->value === 'admin') {
             $validated['is_verified'] = $request->has('is_verified');
-        }
+        };
 
-        // 2. Gestión de la imagen (Flyer)
-        if ($request->hasFile('flyer')) {
-            // Borrar el archivo viejo si existe
-            if ($event->flyer) {
-                Storage::disk('public')->delete($event->flyer);
-            }
-            // Guardar el archivo nuevo
-            $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
-        }
+        $validated['flyer'] = $this->eventService->processFlyer($event, $request);
 
-        // 3. Actualizar los datos del evento
         $event->update($validated);
 
-        // 4. Sincronizar géneros (tabla intermedia)
-        $event->genres()->sync($request->genres);
+        $event->genres()->sync($request->genres); // attach new genres and detach removed ones
 
         return redirect()->route('events.my')->with('success', 'Evento actualizado correctamente.');
     }
@@ -189,23 +170,11 @@ class EventController extends Controller
         // Registrar el voto
         $event->vouches()->attach($user->id);
 
-        // 2. Verificación del umbral
-        if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
-            $event->update(['is_verified' => true]);
-
-            // 3. Accedemos a través de 'organizer'
-            $eventOwner = $event->organizer; 
-
-            if ($eventOwner && $eventOwner->role->value === 'clubber') {
-                // Usamos update() para forzar la persistencia inmediata
-                $eventOwner->update(['role' => 'organizer']);
-            }
-
-            return redirect()->route('events.index')
-                ->with('success', '¡Evento verificado! Ahora es visible para todos.');
+        if ($this->eventService->verifyEvent($event)) {
+            return redirect()->route('events.index')->with('success', '¡Evento verificado! Ahora es visible para todos.');
+        } else {
+            return back()->with('success', 'Voto registrado.');
         }
-
-        return back()->with('success', 'Voto registrado.');
     }
 
 }
