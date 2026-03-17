@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () { // This demands login to access
     // VIBECHECK
     Route::get('/vibecheck/{event}', [VibeCheckController::class, 'create'])->name('events.vibecheck');
     Route::post('/vibecheck/{event}', [VibeCheckController::class, 'store'])->name('events.vibecheck.store');
+    Route::get('/events/{event}/feedback', [EventController::class, 'feedback'])->name('events.feedback');
 
     // DYNAMIC ROUTES (ALWAYS AT THE END)
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
