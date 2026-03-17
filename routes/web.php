@@ -10,11 +10,11 @@ use App\Http\Controllers\VibeCheckController;
 
 require __DIR__.'/auth.php';
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function () { // This demands login to access the routes
 
     Route::get('/', [EventController::class, 'index'])->name('events.index');
     Route::get('/events', [EventController::class, 'index']);
-    // clubbers
+    // CLUBBERS
     Route::resource('events', EventController::class)->except(['index', 'show']); 
     Route::get('/my-events', [EventController::class, 'myEvents'])->name('events.my'); 
 
