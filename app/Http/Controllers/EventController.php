@@ -151,4 +151,14 @@ class EventController extends Controller
         return view('events.waiting-room', compact('events'));
     }
 
+    public function feedback(Event $event)
+    {
+        if (Auth::id() !== $event->user_id) {
+            abort(403);
+        }
+
+        $event->load('vibeChecks');
+
+        return view('admin.events.feedback', compact('event'));
+    }
 }
