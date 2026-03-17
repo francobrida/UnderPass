@@ -9,46 +9,103 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
 
+
 class EventService {
 
-    public function filter(Request $request) {
+    public const int VOUCHES_TO_VERIFY = 3;
 
-        // 1. Iniciamos la consulta: verificados Y que no hayan pasado de fecha
+    public function filter(array $request) 
+    {
         $query = Event::with('genres')
             ->where('is_verified', true)
-            ->where('date', '>=', now()->toDateString()); // <--- ESTO: Solo hoy o futuro
+            ->where('date', '>=', now()->toDateString());
 
-        // 2. Filtro por nombre o lineup
-        if ($request->filled('search')) {
+        if (isset($request['search'])) {
             $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('lineup', 'like', '%' . $request->search . '%');
+                $q->where('title', 'like', '%' . $request['search'] . '%')
+                ->orWhere('lineup', 'like', '%' . $request['search'] . '%');
             });
         }
 
-        // 3. Filtro por Barrio
-        if ($request->filled('neighborhood')) {
-            $query->where('neighborhood', $request->neighborhood);
+        if (isset($request['neighborhood'])) {
+            $query->where('neighborhood', $request['neighborhood']);
         }
 
-        // 4. Filtro por Estilo (Género)
-        if ($request->filled('genre')) {
+        if (isset($request['genre'])) {
             $query->whereHas('genres', function($q) use ($request) {
-                $q->where('genres.id', $request->genre);
+                $q->where('genres.id', $request['genre']);
             });
         }
 
-        // 5. Ordenar por Precio
-        if ($request->price === 'asc') {
+        if (isset($request['price']) && $request['price'] == 'asc') {
             $query->orderBy('price', 'asc');
-        } elseif ($request->price === 'desc') {
+        } elseif (isset($request['price']) && $request['price'] == 'desc') {
             $query->orderBy('price', 'desc');
         } else {
             $query->orderBy('date', 'asc');
         }
 
-        $events = $query->get();
-        return $events;
+        return $query->get(); // get() is like SELECT * FROM events
+    }
+
+    public function store($user, array $request, $file)
+    {
+        $request['price_info'] = $this->processPriceInfo($request);
+        
+        $request['flyer'] = $file->store('flyers', 'public');
+
+        $event = $user->events()->create($request);
+
+        if (isset($request['genres'])) {
+            $event->genres()->attach($request['genres']);
+        }
+
+        return $event;
+    }
+
+    public function processPriceInfo(array $request) 
+    {
+        if (empty($request['price_info'])) {
+            return $request['price'] == 0 ? 'Entrada gratuita' : '';
+        }
+        
+        return $request['price_info'];
+    }
+
+    public function update($event, array $request, $file = null)
+    {
+        $request['price_info'] = $this->processPriceInfo($request);
+
+        if ($file) {
+            if ($event->flyer) {
+                Storage::disk('public')->delete($event->flyer);
+            }
+            $request['flyer'] = $file->store('flyers', 'public');
+        }
+
+        $event->update($request);
+
+        if (isset($request['genres'])) {
+            $event->genres()->sync($request['genres']); // sync() adds new ones and removes old ones automatically
+        }
+
+        return $event;
+    }
+
+    public function delete($event)
+    {
+        if ($event->flyer) {
+            Storage::disk('public')->delete($event->flyer);
+        }
+        
+        return $event->delete();
+    }
+
+    public function vouch($event, $user)
+    {
+        $event->vouches()->attach($user->id);
+
+        return $this->verifyEvent($event);
     }
 
     public function processFlyer(Event $event, Request $request) {
@@ -59,7 +116,28 @@ class EventService {
                 Storage::disk('public')->delete($event->flyer);
             }
 
-            $validated['flyer'] = $request->file('flyer')->store('flyers', 'public');
+            return $request->file('flyer')->store('flyers', 'public');
         }
     }
+
+    public function verifyEvent(Event $event) : bool {
+
+        if ($event->vouches()->count() >= self::VOUCHES_TO_VERIFY) {
+            $event->update(['is_verified' => true]);
+
+            $eventOwner = $event->organizer; 
+
+            if ($eventOwner && $eventOwner->role->value === 'clubber') {
+                
+                $eventOwner->update(['role' => 'organizer']);
+            }
+            return true;
+            
+        } else {
+            return false;
+        }
+        
+    }
+
+
 }
