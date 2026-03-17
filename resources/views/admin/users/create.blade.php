@@ -20,25 +20,6 @@
                     <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
-                        <div x-data="{ imageUrl: null }">
-                            <label class="block text-xs font-bold text-purple-400 uppercase mb-2">Avatar del Usuario</label>
-                            <div class="flex flex-col items-center justify-center w-full">
-                                <label class="w-full flex flex-col items-center px-4 py-6 bg-gray-800 text-purple-400 rounded-xl border-2 border-dashed border-purple-900/50 cursor-pointer hover:border-purple-500 transition shadow-inner">
-                                    <div x-show="!imageUrl" class="flex flex-col items-center">
-                                        <span class="text-sm font-bold uppercase tracking-widest">Subir Foto</span>
-                                    </div>
-                                    <input type="file" name="avatar" class="hidden" accept="image/*" 
-                                        @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
-                                    <template x-if="imageUrl">
-                                        <div class="relative">
-                                            <img :src="imageUrl" class="rounded-full h-32 w-32 object-cover shadow-2xl border-2 border-purple-500">
-                                            <div class="absolute -bottom-2 right-0 bg-purple-600 px-2 py-1 rounded text-[8px] text-white uppercase font-bold">Cambiar</div>
-                                        </div>
-                                    </template>
-                                </label>
-                            </div>
-                        </div>
-
                         <div>
                             <label for="nickname" class="block text-xs font-bold text-purple-400 uppercase mb-2">Nickname</label>
                             <input type="text" name="nickname" id="nickname" value="{{ old('nickname') }}" required

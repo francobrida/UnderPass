@@ -3,11 +3,9 @@
 namespace App\Services;
 
 use App\Models\Event;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Genre;
-use Illuminate\Support\Facades\Auth;
+
 
 
 class EventService {

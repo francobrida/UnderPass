@@ -26,29 +26,6 @@
                         @csrf
                         @method('PUT')
 
-                        <div x-data="{ imageUrl: '{{ $user->avatar ? asset('storage/' . $user->avatar) : null }}' }">
-                            <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 italic">// Foto de Perfil</label>
-                            <div class="flex items-center justify-center w-full">
-                                <label class="w-full flex flex-col items-center px-4 py-8 bg-black text-purple-500 rounded-2xl border-2 border-dashed border-zinc-800 cursor-pointer hover:border-purple-500/50 transition-all group">
-                                    
-                                    <div x-show="!imageUrl" class="flex flex-col items-center">
-                                        <svg class="w-8 h-8 mb-2 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                        <span class="text-[10px] font-black uppercase tracking-widest">Subir Nueva Foto</span>
-                                    </div>
-                                    
-                                    <input type="file" name="avatar" class="hidden" accept="image/*" 
-                                        @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
-                                    
-                                    <template x-if="imageUrl">
-                                        <div class="relative">
-                                            <img :src="imageUrl" class="rounded-full h-28 w-28 object-cover border-2 border-purple-500 p-1">
-                                            <div class="absolute -bottom-1 -right-1 bg-purple-600 px-2 py-1 rounded text-[8px] text-white uppercase font-black">Cambiar</div>
-                                        </div>
-                                    </template>
-                                </label>
-                            </div>
-                        </div>
-
                         <div class="space-y-6">
                             <div>
                                 <label for="nickname" class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 italic">// Nickname</label>

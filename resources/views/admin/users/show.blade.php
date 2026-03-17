@@ -15,22 +15,6 @@
                     </header>
 
                     <div class="space-y-8">
-                        <div>
-                            <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 italic">// Foto de Perfil</label>
-                            <div class="flex items-center justify-center w-full">
-                                <div class="w-full flex flex-col items-center px-4 py-8 bg-black rounded-2xl border border-zinc-800">
-                                    <div class="relative">
-                                        @if($user->avatar)
-                                            <img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-full h-28 w-28 object-cover border-2 border-purple-500 p-1 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
-                                        @else
-                                            <div class="rounded-full h-28 w-28 flex items-center justify-center bg-zinc-900 border-2 border-zinc-800">
-                                                <svg class="w-12 h-12 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="space-y-6">
                             <div>

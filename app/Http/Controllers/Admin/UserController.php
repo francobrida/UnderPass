@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private UserService $userService
+    ){}
+
     public function create()
     {
         return view('admin.users.create');
@@ -47,26 +52,17 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        
-        $request->validate([
+        $validated = $request->validate([
             'nickname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'in:admin,clubber,organizer'],
-            'points' => ['nullable', 'integer', 'min:0'],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'avatar' => ['nullable', 'image', 'max:2048'], // 2MB max ?
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'role'     => ['required', 'in:admin,clubber,organizer'],
+            'points'   => ['nullable', 'integer', 'min:0'],
+            'password' => ['nullable', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
-        $user->fill($request->only('nickname', 'email', 'role', 'points'));
+        $this->userService->update($user, $validated);
 
-        if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
-        }
-
-        $user->save();
-
-        return redirect()->route('admin.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('admin.index')->with('success', 'Usuario actualizado.');
     }
 
     public function destroy(User $user)
