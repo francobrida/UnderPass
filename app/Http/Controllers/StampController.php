@@ -40,7 +40,7 @@ class StampController extends Controller
             'scanned_at' => now(),
         ]);
 
-        return redirect()->route('user.stamps') // Redirigimos a la colección para que lo vea
+        return redirect()->route('user.stamps') 
             ->with('success', '¡Nuevo sello añadido a tu pasaporte!');
     }
 
