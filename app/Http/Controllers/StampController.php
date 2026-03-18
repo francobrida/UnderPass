@@ -3,55 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\Stamp;
-use Illuminate\Http\Request;
+use App\Services\StampService;
 use Illuminate\Support\Facades\Auth;
 
 class StampController extends Controller
 {
+    public function __construct(
+        private StampService $stampService
+    ) {}
+
     public function stamps()
     {
         $user = Auth::user();
-        $stamps = Stamp::where('user_id', Auth::id())
-            ->with('event') 
-            ->latest('scanned_at')
-            ->get();
+        $stamps = $this->stampService->getUserStamps($user->id);
 
         return view('profile.stamps', compact('stamps', 'user'));
     }
 
     public function claim($token)
     {
-        $event = Event::where('stamp_token', $token)->firstOrFail();
-        $user = Auth::user();
+        $result = $this->stampService->claimStamp(Auth::user(), $token);
 
-        $alreadyHasStamp = Stamp::where('user_id', $user->id)
-            ->where('event_id', $event->id)
-            ->exists();
-
-        if ($alreadyHasStamp) {
-            return redirect()->route('events.show', $event)
+        if ($result['status'] === 'already_has') {
+            return redirect()->route('events.show', $result['event'])
                 ->with('info', 'Ya tienes este sello.');
         }
 
-        Stamp::create([
-            'user_id' => $user->id,
-            'event_id' => $event->id,
-            'scanned_at' => now(),
-        ]);
-
-        return redirect()->route('user.stamps') 
+        return redirect()->route('user.stamps')
             ->with('success', '¡Nuevo sello añadido a tu pasaporte!');
     }
 
     public function vibecheckForm(Event $event)
     {
-        $user = Auth::user();
-
-        $hasStamp = \App\Models\Stamp::where('user_id', $user->id)->where('event_id', $event->id)->exists();
-
-        if (!$hasStamp) {
-            return redirect()->route('events.index')->with('error', 'No puedes evaluar un evento al que no asististe.');
+        if (!$this->stampService->hasStamp(Auth::user(), $event)) {
+            return redirect()->route('events.index')
+                ->with('error', 'No, sorry.');
         }
 
         return view('events.vibecheck', compact('event'));
