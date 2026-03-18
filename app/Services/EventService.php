@@ -6,8 +6,6 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-
-
 class EventService {
 
     public const int VOUCHES_TO_VERIFY = 3;
@@ -18,26 +16,26 @@ class EventService {
             ->where('is_verified', true)
             ->where('date', '>=', now()->toDateString());
 
-        if (isset($request['search'])) {
+        if (!empty($request['search'])) {
             $query->where(function($q) use ($request) {
                 $q->where('title', 'like', '%' . $request['search'] . '%')
                 ->orWhere('lineup', 'like', '%' . $request['search'] . '%');
             });
         }
 
-        if (isset($request['neighborhood'])) {
+        if (!empty($request['neighborhood'])) {
             $query->where('neighborhood', $request['neighborhood']);
         }
 
-        if (isset($request['genre'])) {
+        if (!empty($request['genre'])) {
             $query->whereHas('genres', function($q) use ($request) {
                 $q->where('genres.id', $request['genre']);
             });
         }
 
-        if (isset($request['price']) && $request['price'] == 'asc') {
+        if (!empty($request['price']) && $request['price'] == 'asc') {
             $query->orderBy('price', 'asc');
-        } elseif (isset($request['price']) && $request['price'] == 'desc') {
+        } elseif (!empty($request['price']) && $request['price'] == 'desc') {
             $query->orderBy('price', 'desc');
         } else {
             $query->orderBy('date', 'asc');
@@ -84,7 +82,7 @@ class EventService {
         $event->update($request);
 
         if (isset($request['genres'])) {
-            $event->genres()->sync($request['genres']); // sync() adds new ones and removes old ones automatically
+            $event->genres()->sync($request['genres']);
         }
 
         return $event;
@@ -136,6 +134,5 @@ class EventService {
         }
         
     }
-
 
 }
