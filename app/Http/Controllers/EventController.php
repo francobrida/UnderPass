@@ -28,13 +28,22 @@ class EventController extends Controller
         return view('events.show', compact('event')); 
     }
 
-    public function myEvents(Request $request)
+    public function myEvents()
     {
-        $user = $request->user();
-   
-        $events = $user->events()->latest()->get();
+        $user = Auth::user();
+        $currentTime = now(); 
 
-        return view('events.my', compact('events'));
+        $nextEvents = $user->events()
+            ->where('date', '>=', $currentTime->toDateString())
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $pastEvents = $user->events()
+            ->where('date', '<', $currentTime->toDateString())
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return view('events.my', compact('nextEvents', 'pastEvents'));
     }
 
     public function create()

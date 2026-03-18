@@ -1,38 +1,73 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Seeders;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
+use App\Models\Event;
+use App\Models\VibeCheck;
+use Illuminate\Database\Seeder;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
- */
-class EventFactory extends Factory
+class DatabaseSeeder extends Seeder
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-   public function definition(): array
+    public function run(): void
     {
-        $neighborhoods = ['Poblenou', 'Gràcia', 'Raval', 'Eixample', 'Poble Sec', 'Sant Antoni', 'Born'];
-
-        return [
-            'user_id' => \App\Models\User::factory(), 
-            'title' => fake()->randomElement(['Midnight Ritual', 'Industrial Bass', 'Techno Warehouse']),
-            'lineup' => fake()->words(3, true),
-            'description' => fake()->paragraph(),
-            'date' => fake()->dateTimeBetween('now', '+2 months'),
-            'start_time' => '23:00:00',
-            'end_time' => '06:00:00',
-            'price' => fake()->randomFloat(2, 10, 50),
-            'price_info' => 'Entrada anticipada',
-            'location_name' => fake()->company(),
-            'neighborhood' => fake()->randomElement($neighborhoods),
-            'flyer' => 'flyer.jpg',
-            'is_verified' => false,
-            'is_18_plus' => true,
+        $flyers = ['flyers/party1.jpg', 'flyers/party2.jpg', 'flyers/party3.jpg'
         ];
+
+        $organizer = User::factory()->create([
+            'nickname' => 'RandomGuy',
+            'email' => 'organizer@test.com',
+            'role' => 'organizer',
+            'password' => bcrypt('password'), // this hashes the password, in this case, "password"
+        ]);
+
+        \App\Models\Event::factory(5)->create([
+            'user_id' => $organizer->id,
+            'flyer'   => fake()->randomElement($flyers),
+        ]);
+
+        Event::factory(3)->create([
+            'user_id' => $organizer->id,
+            'flyer' => fake()->randomElement($flyers),
+        ]);
+
+        $pastEvents = Event::factory(2)->create([
+            'user_id' => $organizer->id,
+            'date' => now()->subDays(15)->toDateString(), 
+            'title' => 'Flashback Night',
+            'flyer' => fake()->randomElement($flyers),
+            'is_verified' => true,
+        ]);
+
+        foreach ($pastEvents as $event) { 
+            VibeCheck::factory(3)->create([ // anonymous feedback for past events
+                'event_id' => $event->id,
+                'user_id' => User::factory()->create(['role' => 'clubber'])->id,
+            ]);
+        } 
+
+        User::factory()->create([
+            'nickname' => 'Admin',
+            'email' => 'admin@underpass.com',
+            'role' => 'admin',
+            'password' => bcrypt('password'),
+        ]);
+        
+        User::factory()->create([
+            'nickname' => 'RaverUser',
+            'email' => 'clubber@test.com',
+            'role' => 'clubber',
+            'password' => bcrypt('password'),
+        ]);
+
+        $raver = User::where('email', 'clubber@test.com')->first();
+
+        if ($pastEvents->isNotEmpty()) { 
+            \App\Models\Stamp::create([ // stamp for past event
+                'user_id' => $raver->id,
+                'event_id' => $pastEvents->random()->id,
+                'stamp_token' => \Illuminate\Support\Str::random(32),
+            ]);
+        } 
     }
 }
