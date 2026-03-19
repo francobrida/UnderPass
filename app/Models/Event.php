@@ -40,14 +40,4 @@ class Event extends Model
         return $this->hasMany(Stamp::class);
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($event) {
-            $event->stamp_token = Str::random(32); /* this generates a unique random token for the event, 
-             which will be converted into a QR code for claiming stamps */
-        });
-    }
-
 }
