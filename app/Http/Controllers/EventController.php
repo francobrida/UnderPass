@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Genre;
 use App\Services\EventService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 
 class EventController extends Controller
 {
@@ -52,28 +54,27 @@ class EventController extends Controller
         return view('events.create', compact('genres'));
     }
 
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
-        $validated = $request->validate([
-            'title'         => 'required|string|max:100',
-            'lineup'        => 'required|string',
-            'description'   => 'required|string',
-            'date'          => 'required|date|after_or_equal:today', 
-            'start_time'    => 'required',
-            'end_time'      => 'required',
-            'price'         => 'required|numeric|min:0',
-            'price_info'    => 'nullable|string|max:100', 
-            'ticket_link'   => 'nullable|url',
-            'location_name' => 'required|string|max:100',
-            'flyer'         => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'neighborhood'  => 'required|string|max:100',
-            'genres'        => 'required|array|min:1', 
-            'genres.*'      => 'exists:genres,id',
-        ]);
-
-        $this->eventService->store($request->user(), $validated, $request->file('flyer'));
+        $this->eventService->store(
+            $request->user(), 
+            $request->validated(), 
+            $request->file('flyer')
+        );
 
         return redirect()->route('events.my')->with('success', 'Evento creado. Esperando verificaciones!');
+    }
+
+    public function update(UpdateEventRequest $request, Event $event) 
+    {
+        
+        if (Auth::user()->role->value === 'admin') {
+            $event->is_verified = $request->has('is_verified');
+        }
+
+        $this->eventService->update($event, $request->validated(), $request->file('flyer'));
+
+        return redirect()->route('events.my')->with('success', 'Evento actualizado correctamente.');
     }
 
     public function edit(Event $event)
@@ -85,39 +86,6 @@ class EventController extends Controller
         $genres = Genre::all();
         
         return view('events.edit', compact('event', 'genres'));
-    }
-
-    public function update(Request $request, Event $event) 
-    {
-        
-        if ($event->user_id !== Auth::id() && Auth::user()->role->value !== 'admin') {
-            abort(403);
-        }
-
-        $validated = $request->validate([
-            'title'         => 'required|string|max:100',
-            'lineup'        => 'required|string',
-            'description'   => 'required|string',
-            'date'          => 'required|date', 
-            'start_time'    => 'required',
-            'end_time'      => 'required',
-            'price'         => 'required|numeric|min:0',
-            'price_info'    => 'nullable|string|max:100', 
-            'ticket_link'   => 'nullable|url',
-            'location_name' => 'required|string|max:100',
-            'flyer'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
-            'neighborhood'  => 'required|string|max:100',
-            'genres'        => 'required|array|min:1', 
-            'genres.*'      => 'exists:genres,id',
-        ]);
-
-        if (Auth::user()->role->value === 'admin') {
-            $event->is_verified = $request->has('is_verified');
-        }
-
-        $this->eventService->update($event, $validated, $request->file('flyer'));
-
-        return redirect()->route('events.my')->with('success', 'Evento actualizado correctamente.');
     }
 
     public function destroy(Request $request, Event $event) 

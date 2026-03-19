@@ -1,29 +1,86 @@
-# Laravel + Livewire Starter Kit
+## UnderPass | Barcelona Community Event Agenda
+UnderPass is a specialized platform designed for the management and community-driven curation of electronic music events within the Barcelona local scene. The application allows users to publish events, verify them through a collective trust system, and participate in a gamification loop based on physical attendance and qualitative feedback.
 
-## Introduction
+## 🛠 Technologies
+Backend: Laravel 12 (PHP 8.2)
 
-Our Laravel + [Livewire](https://livewire.laravel.com) starter kit provides a robust, modern starting point for building Laravel applications with a Livewire frontend.
+Frontend: Livewire (Reactive Components), Blade & Tailwind CSS
 
-Livewire is a powerful way of building dynamic, reactive, frontend UIs using just PHP. It's a great fit for teams that primarily use Blade templates and are looking for a simpler alternative to JavaScript-driven SPA frameworks like React and Vue.
+Architecture: Service Layer Pattern to decouple business logic from controllers.
 
-This Livewire starter kit utilizes Livewire 4, TypeScript, Tailwind, and the [Flux UI](https://fluxui.dev) component library.
+Database: MySQL
 
-If you are looking for the alternate configurations of this starter kit, they can be found in the following branches:
+Validation: Form Request Classes for clean data handling and centralized authorization.
 
-- [workos](https://github.com/laravel/livewire-starter-kit/tree/workos) - if WorkOS is selected for authentication
+## 🚀 Installation
+Clone the repository: git clone [https://github.com/francobrida/UnderPass]
 
-## Official Documentation
+Install PHP dependencies: composer install
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+Install Frontend dependencies: npm install && npm run build
 
-## Contributing
+Environment Setup: Copy .env.example to .env and run php artisan key:generate.
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Migrations & Seeders: php artisan migrate --seed
 
-## Code of Conduct
+Run Server: php artisan serve
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🧠 Business Logic & Main Features
 
-## License
+1.Verification System (Vouches)
+To ensure agenda quality, new events are not immediately public.
 
-The Laravel + Livewire starter kit is open-sourced software licensed under the MIT license.
+The Waiting Room: Newly created events enter a "pending" state.
+
+Vouches: Trusted users can grant a "Vouch" (vote of confidence). Once an event reaches 3 Vouches, it is automatically verified (is_verified = true) and published on the main feed.
+
+2.Gamification: QR Codes & Stamps
+Once an event is verified, the organizer gains access to a unique QR Code on the event's detail page.
+
+Stamp Collection: Attendees scan this QR code at the physical location.
+
+Logic: Scanning the QR awards the user a Stamp (collectible digital badge) in their passport. This Stamp serves as technical proof of attendance and is a prerequisite for providing feedback.
+
+3.Post-Event Feedback (Vibechecks)
+The system collects qualitative data to maintain high community standards.
+A Vibecheck (review) becomes available 6 hours after the event ends, exclusively for users who hold the event's Stamp.
+
+Reward: Completing a Vibecheck (rating sound, safe space, and comments) awards the user 5 points.
+
+4.Admin Management Panel
+The platform includes a restricted Administrative Dashboard for global oversight.
+
+Full CRUD: Administrators have the authority to create, read, update, and delete any Event or User record.
+
+Moderation: Direct control over event verification status and user role management to ensure community safety.
+
+## 📊 Entity-Relationship Model 
+
+![UnderPass Database Schema](screenshots/diagrama-MER.png)
+
+## 📸 Demo & Screenshots
+
+Main Agenda: 
+![Main Events Agenda](screenshots/agenda.png)
+
+Waiting Room: 
+![Waiting Room](screenshots/waiting-room.png)
+
+Organizer Event View (with QR) : 
+![Event view](screenshots/event-view.png)
+
+Admin Panel (User and Event CRUD):
+![Admin view](screenshots/admin.png)
+
+User Passport (Stamps and Points): 
+![Passport view](screenshots/stamps.png)
+
+## 📈 Scalability & Future Improvements
+
+Frontend Consistency: Some views are inconsistent with the overall design language.
+
+Organizer Rating System: Implementation of a reputation score for organizers based on the average ratings of their past Vibechecks.
+
+Point Benefist:A dedicated module to exchange accumulated points for exclusive community benefits or partner discounts.
+
+Local Expansion? : The neighborhood-based filtering architecture is designed to scale to other underground hubs by simply updating the location datasets.
