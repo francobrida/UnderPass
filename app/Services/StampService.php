@@ -18,7 +18,7 @@ class StampService
 
     public function claimStamp($user, $token)
     {
-        $event = Event::where('stamp_token', $token)->firstOrFail();
+        $event = Event::where('stamp_token', $token)->firstOrFail(); // this will throw a 404 if the token is invalid
 
         $alreadyHasStamp = Stamp::where('user_id', $user->id)
             ->where('event_id', $event->id)

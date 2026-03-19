@@ -63,11 +63,11 @@ class DatabaseSeeder extends Seeder
         $raver = User::where('email', 'clubber@test.com')->first();
 
         if ($pastEvents->isNotEmpty()) { 
-            \App\Models\Stamp::create([ // stamp for past event
+            \App\Models\Stamp::create([ 
                 'user_id' => $raver->id,
                 'event_id' => $pastEvents->random()->id,
-                'stamp_token' => \Illuminate\Support\Str::random(32),
+                'scanned_at' => now()->subDays(10),
             ]);
-        } 
+        }
     }
 }

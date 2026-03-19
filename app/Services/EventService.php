@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class EventService {
@@ -17,10 +18,8 @@ class EventService {
             ->where('date', '>=', now()->toDateString());
 
         if (!empty($request['search'])) {
-            $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request['search'] . '%')
-                ->orWhere('lineup', 'like', '%' . $request['search'] . '%');
-            });
+            $search = '%' . $request['search'] . '%';
+            $query->whereAny(['title', 'lineup'], 'like', $search);
         }
 
         if (!empty($request['neighborhood'])) {
@@ -28,20 +27,21 @@ class EventService {
         }
 
         if (!empty($request['genre'])) {
-            $query->whereHas('genres', function($q) use ($request) {
-                $q->where('genres.id', $request['genre']);
+            $query->whereHas('genres', function($genreQuery) use ($request) {
+                $genreQuery->where('genres.id', $request['genre']);
             });
         }
 
-        if (!empty($request['price']) && $request['price'] == 'asc') {
-            $query->orderBy('price', 'asc');
-        } elseif (!empty($request['price']) && $request['price'] == 'desc') {
-            $query->orderBy('price', 'desc');
+        $order = $request['price'] ?? null;
+
+        if ($order === 'asc' || $order === 'desc') {
+            $query->orderBy('price', $order);
         } else {
             $query->orderBy('date', 'asc');
         }
 
-        return $query->get(); // get() is like SELECT * FROM events
+        return $query->get();
+
     }
 
     public function store($user, array $request, $file)
@@ -49,6 +49,8 @@ class EventService {
         $request['price_info'] = $this->processPriceInfo($request);
         
         $request['flyer'] = $file->store('flyers', 'public');
+
+        $request['stamp_token'] = Str::random(32); 
 
         $event = $user->events()->create($request);
 

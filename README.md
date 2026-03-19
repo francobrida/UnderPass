@@ -58,6 +58,51 @@ Moderation: Direct control over event verification status and user role manageme
 
 ![UnderPass Database Schema](screenshots/diagrama-MER.png)
 
+¡Claro! Aquí tienes el bloque de Test Credentials y la Guía de Uso formateada en Markdown limpio (sin tablas), lista para que la copies y pegues directamente en tu archivo README.md.
+
+Lo he organizado con puntos de lista para que sea súper legible tanto en VS Code como en GitHub.
+
+## 🔐 Test Credentials
+To evaluate the platform, use the following pre-seeded accounts (run php artisan migrate --seed first):
+
+1.Admin
+
+Email: admin@underpass.com
+
+Password: password
+
+Access: Full Dashboard, User Management, and Event CRUD.
+
+2.Event Organizer
+
+Email: organizer@test.com
+
+Password: password
+
+Access: Create Events, View QR Codes, and check Event Feedback.
+
+3.Clubber (User)
+
+Email: clubber@test.com
+
+Password: password
+
+Access: Vouch for events, Claim Stamps (Gamification), and submit Vibechecks.
+
+## 🕹️ Quick Testing Guide
+
+Follow this flow to test the core "Gamification Loop" and the "Service Layer" logic:
+
+Step 1 (Vouching): Login as Clubber. Go to the Waiting Room and "Vouch" for a pending event. (Events need 3 vouches to be published).
+
+Step 2 (Verification): Login as Admin. You will see the event in the Admin Panel. You can also verify it manually if needed.
+
+Step 3 (The Stamp): As a Clubber, go to a verified event's detail page. Click on the QR Code (this simulates the physical scan at the club).
+
+Step 4 (Passport): Visit your My Stamps (Passport) section. You will see the new Stamp collected and your points increased.
+
+Step 5 (Feedback): If the event has ended, you can submit a Vibecheck (review) to earn 5 extra points.
+
 ## 📸 Demo & Screenshots
 
 Main Agenda: 
