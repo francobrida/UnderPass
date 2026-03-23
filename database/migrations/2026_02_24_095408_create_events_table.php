@@ -21,7 +21,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->decimal('price', 8, 2)->default(0);
-            $table->string('price_info', 100);
+            $table->string('price_info', 100)->nullable();
             $table->string('ticket_link', 100)->nullable();
             $table->string('location_name', 100);
             $table->string('neighborhood', 100);
