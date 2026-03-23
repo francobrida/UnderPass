@@ -8,7 +8,6 @@ use App\Models\VibeCheck;
 use App\Models\Stamp;
 use App\Enums\UserRole;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,11 +40,10 @@ class DatabaseSeeder extends Seeder
         $clubber = User::factory()->create([
             'nickname' => 'RaverUser',
             'email' => 'clubber@test.com',
-            'role' => UserRole::CLUBBER, // O el nombre que uses en tu Enum para clubber
+            'role' => UserRole::CLUBBER, 
             'password' => bcrypt('password'),
         ]);
 
-        // 5. EVENTO PASADO + SELLO + VIBECHECK (Para testear feedback)
         $pastEvent = Event::factory()->create([
             'user_id' => $organizer->id,
             'date' => now()->subDays(10)->toDateString(),
