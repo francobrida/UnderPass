@@ -1,9 +1,15 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-        
-        <h2 class="text-white text-2xl font-black uppercase tracking-tighter mb-8">
-            Próximos Eventos
-        </h2>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <h2 class="text-white text-2xl font-black uppercase tracking-tighter">
+                Próximos Eventos
+            </h2>
+
+            <a href="{{ route('events.create') }}" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition shadow-lg shadow-purple-500/20 w-fit">
+                + Crear Evento
+            </a>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             @foreach($nextEvents as $event)
