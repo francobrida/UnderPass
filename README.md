@@ -13,17 +13,14 @@ Database: MySQL
 Validation: Form Request Classes for clean data handling and centralized authorization.
 
 ## 🚀 Installation
-Clone the repository: git clone [https://github.com/francobrida/UnderPass]
 
-Install PHP dependencies: composer install
-
-Install Frontend dependencies: npm install && npm run build
-
-Environment Setup: Copy .env.example to .env and run php artisan key:generate.
-
-Migrations & Seeders: php artisan migrate --seed
-
-Run Server: php artisan serve
+1. **Clone the repository**: `git clone https://github.com/francobrida/UnderPass.git`
+2. **Install PHP dependencies**: `composer install`
+3. **Install Frontend dependencies**: `npm install && npm run build`
+4. **Environment Setup**: Copy `.env.example` to `.env` and run `php artisan key:generate`.
+5. **Database Setup**: `php artisan migrate --seed`
+6. **Storage Link**: `php artisan storage:link` 
+7. **Run Server**: `php artisan serve`
 
 ## 🧠 Business Logic & Main Features
 
