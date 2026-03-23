@@ -22,6 +22,7 @@ class EventFactory extends Factory
             'start_time' => '23:00',
             'end_time' => '06:00',
             'price' => $this->faker->randomElement([0, 10, 15, 20]),
+            'price_info' => $this->faker->optional()->randomElement(['Incluye consumición', 'Early Bird', 'Taquilla únicamente']),
             'location_name' => $this->faker->company(),
             'neighborhood' => $this->faker->randomElement(['Poblenou', 'Eixample', 'Gràcia', 'Raval']),
             'is_verified' => true,
