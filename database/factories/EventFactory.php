@@ -1,73 +1,33 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Event;
-use App\Models\VibeCheck;
-use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
-class DatabaseSeeder extends Seeder
+class EventFactory extends Factory
 {
-    public function run(): void
+    protected $model = Event::class;
+
+    public function definition(): array
     {
-        $flyers = ['flyers/party1.jpg', 'flyers/party2.jpg', 'flyers/party3.jpg'
-        ];
-
-        $organizer = User::factory()->create([
-            'nickname' => 'RandomGuy',
-            'email' => 'organizer@test.com',
-            'role' => 'organizer',
-            'password' => bcrypt('password'), // this hashes the password, in this case, "password"
-        ]);
-
-        \App\Models\Event::factory(5)->create([
-            'user_id' => $organizer->id,
-            'flyer'   => fake()->randomElement($flyers),
-        ]);
-
-        Event::factory(3)->create([
-            'user_id' => $organizer->id,
-            'flyer' => fake()->randomElement($flyers),
-        ]);
-
-        $pastEvents = Event::factory(2)->create([
-            'user_id' => $organizer->id,
-            'date' => now()->subDays(15)->toDateString(), 
-            'title' => 'Flashback Night',
-            'flyer' => fake()->randomElement($flyers),
+        return [
+            'user_id' => User::factory(), 
+            'title' => $this->faker->sentence(3),
+            'lineup' => $this->faker->name() . ', ' . $this->faker->name(),
+            'description' => $this->faker->paragraph(),
+            'date' => $this->faker->dateTimeBetween('now', '+2 months')->format('Y-m-d'),
+            'start_time' => '23:00',
+            'end_time' => '06:00',
+            'price' => $this->faker->randomElement([0, 10, 15, 20]),
+            'location_name' => $this->faker->company(),
+            'neighborhood' => $this->faker->randomElement(['Poblenou', 'Eixample', 'Gràcia', 'Raval']),
             'is_verified' => true,
-        ]);
-
-        foreach ($pastEvents as $event) { 
-            VibeCheck::factory(3)->create([ // anonymous feedback for past events
-                'event_id' => $event->id,
-                'user_id' => User::factory()->create(['role' => 'clubber'])->id,
-            ]);
-        } 
-
-        User::factory()->create([
-            'nickname' => 'Admin',
-            'email' => 'admin@underpass.com',
-            'role' => 'admin',
-            'password' => bcrypt('password'),
-        ]);
-        
-        User::factory()->create([
-            'nickname' => 'RaverUser',
-            'email' => 'clubber@test.com',
-            'role' => 'clubber',
-            'password' => bcrypt('password'),
-        ]);
-
-        $raver = User::where('email', 'clubber@test.com')->first();
-
-        if ($pastEvents->isNotEmpty()) { 
-            \App\Models\Stamp::create([ 
-                'user_id' => $raver->id,
-                'event_id' => $pastEvents->random()->id,
-                'scanned_at' => now()->subDays(10),
-            ]);
-        }
+            'is_18_plus' => true,
+            'stamp_token' => Str::random(32),
+            'flyer' => 'flyers/party' . rand(1, 3) . '.jpg', 
+        ];
     }
 }
