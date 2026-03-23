@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => $organizer->id,
             'date' => now()->subDays(10)->toDateString(),
             'title' => 'Flashback Night',
+            'price_info' => 'TBA',
             'is_verified' => true,
         ]);
 
@@ -64,6 +65,7 @@ class DatabaseSeeder extends Seeder
         
         $pendingEvent = Event::factory()->create([
             'title' => 'Test Event no verificado',
+            'price_info' => 'Taquilla inversa',
             'is_verified' => false,
         ]);
         $pendingEvent->vouches()->attach(User::factory(2)->create()->pluck('id'));
