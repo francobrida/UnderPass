@@ -1,10 +1,10 @@
-# UnderPass | Barcelona Underground Electronic Scene Agenda
+# 👽 UnderPass | Barcelona Underground Electronic Scene Agenda
 UnderPass is a specialized platform designed for the management and community-driven curation of electronic music events within the Barcelona local scene. The application allows users to publish events, verify them through a collective trust system, and participate in a gamification loop based on physical attendance and qualitative feedback.
 
 ## 🛠 Technologies
 **Backend**: Laravel 12 (PHP 8.2)
 
-**Frontend**: Livewire (Reactive Components), Blade & Tailwind CSS
+**Frontend**: Livewire (Reactive Components - applied in Event Filtering), Blade & Tailwind CSS
 
 **Architecture**: Service Layer Pattern to decouple business logic from controllers.
 
@@ -32,31 +32,31 @@ If you don't see the flyers after running the command, ensure there isn't an exi
 ## 🧠 Business Logic & Main Features
 
 1. **Verification System (Vouches)**
-To ensure agenda quality, new events are not immediately public.
-
-The Waiting Room: Newly created events enter a "pending" state.
-
-Vouches: Trusted users can grant a "Vouch" (vote of confidence). Once an event reaches 3 Vouches, it is automatically verified (is_verified = true) and published on the main feed.
+    To ensure agenda quality, new events are not immediately public.
+    
+    The Waiting Room: Newly created events enter a "pending" state.
+    
+    Vouches: Trusted users can grant a "Vouch" (vote of confidence). Once an event reaches 3 Vouches, it is automatically verified (is_verified = true) and published on the main feed.
 
 2. **Gamification: QR Codes & Stamps**
-Once an event is verified, the organizer gains access to a unique QR Code on the event's detail page.
-
-Stamp Collection: Attendees scan this QR code at the physical location.
-
-Logic: Scanning the QR awards the user a Stamp (collectible digital badge) in their passport. This Stamp serves as technical proof of attendance and is a prerequisite for providing feedback.
+    Once an event is verified, the organizer gains access to a unique QR Code on the event's detail page.
+    
+    Stamp Collection: Attendees scan this QR code at the physical location.
+    
+    Logic: Scanning the QR awards the user a Stamp (collectible digital badge) in their passport. This Stamp serves as technical proof of attendance and is a prerequisite for providing feedback.
 
 3. **Post-Event Feedback (Vibechecks)**
-The system collects qualitative data to maintain high community standards.
-A Vibecheck (review) becomes available 6 hours after the event ends, exclusively for users who hold the event's Stamp.
-
-Reward: Completing a Vibecheck (rating sound, safe space, and comments) awards the user 5 points.
+    The system collects qualitative data to maintain high community standards.
+    A Vibecheck (review) becomes available 6 hours after the event ends, exclusively for users who hold the event's Stamp.
+    
+    Reward: Completing a Vibecheck (rating sound, safe space, and comments) awards the user 5 points.
 
 4. **Admin Management Panel**
-The platform includes a restricted Administrative Dashboard for global oversight.
-
-Full CRUD: Administrators have the authority to create, read, update, and delete any Event or User record.
-
-Moderation: Direct control over event verification status and user role management to ensure community safety.
+    The platform includes a restricted Administrative Dashboard for global oversight.
+    
+    Full CRUD: Administrators have the authority to create, read, update, and delete any Event or User record.
+    
+    Moderation: Direct control over event verification status and user role management to ensure community safety.
 
 ## 📊 Entity-Relationship Model 
 
@@ -67,28 +67,28 @@ Moderation: Direct control over event verification status and user role manageme
 To evaluate the platform, use the following pre-seeded accounts (run php artisan migrate --seed first):
 
 1. **Admin**
-
-Email: admin@underpass.com
-
-Password: password
-
-Access: Full Dashboard, User Management, and Event CRUD.
+    
+    Email: admin@underpass.com
+    
+    Password: password
+    
+    Access: Full Dashboard, User Management, and Event CRUD.
 
 2. **Event Organizer**
 
-Email: organizer@test.com
-
-Password: password
-
-Access: Create Events, View QR Codes, and check Event Feedback.
+    Email: organizer@test.com
+    
+    Password: password
+    
+    Access: Create Events, View QR Codes, and check Event Feedback.
 
 3. **Clubber (User)**
 
-Email: clubber@test.com
-
-Password: password
-
-Access: Vouch for events, Claim Stamps (Gamification), and submit Vibechecks.
+    Email: clubber@test.com
+    
+    Password: password
+    
+    Access: Vouch for events, Claim Stamps (Gamification), and submit Vibechecks.
 
 ## 🕹️ Quick Testing Guide
 Follow this flow to test the UnderPass core logic, from basic CRUD to the Gamification loop:
@@ -157,6 +157,8 @@ User Passport (Stamps and Points):
 ## 📈 Scalability & Future Improvements
 
 Frontend Consistency: Some views are inconsistent with the overall design language.
+
+Advanced Admin Analytics: Implementing a comprehensive search and filtering system within the Admin Dashboard (by User Role, Event Date, or Verification Status) to handle large-scale datasets efficiently.
 
 Organizer Rating System: Implementation of a reputation score for organizers based on the average ratings of their past Vibechecks.
 
