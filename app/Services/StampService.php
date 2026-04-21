@@ -4,11 +4,12 @@ namespace App\Services;
 
 use App\Models\Event;
 use App\Models\Stamp;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class StampService
 {
-    public function getUserStamps($userId)
+    public function getUserStamps(int $userId): Collection
     {
         return Stamp::where('user_id', $userId)
             ->with('event')
@@ -16,9 +17,9 @@ class StampService
             ->get();
     }
 
-    public function claimStamp($user, $token)
+    public function claimStamp(User $user, string $token): array
     {
-        $event = Event::where('stamp_token', $token)->firstOrFail(); // this will throw a 404 if the token is invalid
+        $event = Event::where('stamp_token', $token)->firstOrFail(); 
 
         $alreadyHasStamp = Stamp::where('user_id', $user->id)
             ->where('event_id', $event->id)
@@ -37,7 +38,7 @@ class StampService
         return ['status' => 'success', 'stamp' => $stamp];
     }
 
-    public function hasStamp($user, $event)
+    public function hasStamp(User $user, Event $event): bool
     {
         return Stamp::where('user_id', $user->id)
             ->where('event_id', $event->id)

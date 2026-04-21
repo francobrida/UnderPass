@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService 
 {
-    public function store(array $request)
+    public function store(array $request): User
     {
         return User::create([
             'nickname' => $request['nickname'],
@@ -17,7 +17,7 @@ class UserService
         ]);
     }
 
-    public function update(User $user, array $request)
+    public function update(User $user, array $request): bool
     {
         $user->fill($request);
 
