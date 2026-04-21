@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -63,15 +64,15 @@ class User extends Authenticatable
         return $this->role === \App\Enums\UserRole::ADMIN; 
     }
 
-    public function stamps() {
-    return $this->hasMany(Stamp::class);
+    public function stamps(): HasMany {
+        return $this->hasMany(Stamp::class);
     }
 
-    public function events() {
+    public function events(): HasMany {
         return $this->hasMany(Event::class);
     }
 
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
     }
@@ -80,7 +81,7 @@ class User extends Authenticatable
      * Send the email verification notification.
      * @return void
      */
-    public function sendEmailVerificationNotification()
+    public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmailNotification());
     }

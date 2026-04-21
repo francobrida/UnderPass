@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Services\StampService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class StampController extends Controller
 {
@@ -12,7 +14,7 @@ class StampController extends Controller
         private StampService $stampService
     ) {}
 
-    public function stamps()
+    public function stamps(): View
     {
         $user = Auth::user();
         $stamps = $this->stampService->getUserStamps($user->id);
@@ -20,7 +22,7 @@ class StampController extends Controller
         return view('profile.stamps', compact('stamps', 'user'));
     }
 
-    public function claim($token)
+    public function claim(string $token): RedirectResponse
     {
         $result = $this->stampService->claimStamp(Auth::user(), $token);
 
@@ -33,7 +35,7 @@ class StampController extends Controller
             ->with('success', '¡Nuevo sello añadido a tu pasaporte!');
     }
 
-    public function vibecheckForm(Event $event)
+    public function vibecheckForm(Event $event): View|RedirectResponse
     {
         if (!$this->stampService->hasStamp(Auth::user(), $event)) {
             return redirect()->route('events.index')

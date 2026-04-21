@@ -4,18 +4,20 @@ namespace App\Services;
 
 use App\Models\VibeCheck;
 use App\Models\Stamp;
+use App\Models\User;
+use App\Models\Event;
 use Illuminate\Support\Facades\DB;
 
 class VibeCheckService 
 {
     public const int POINTS_FOR_VIBECHECK = 5;
 
-    public function canUserVibeCheck($user, $event): bool
+    public function canUserVibeCheck(User $user, Event $event): bool
     {
         return Stamp::where('user_id', $user->id)->where('event_id', $event->id)->exists();
     }
 
-    public function store($user, $event, array $data)
+    public function store(User $user, Event $event, array $data): bool
     {
         $alreadyVoted = VibeCheck::where('user_id', $user->id)->where('event_id', $event->id)->exists();
 

@@ -29,7 +29,7 @@ class EventFilter extends Component
             'neighborhoods' => Event::where('date', '>=', now())
                                 ->distinct() 
                                 ->orderBy('neighborhood', 'asc')
-                                ->pluck('neighborhood'), // pluck to get just the names..
+                                ->pluck('neighborhood'),
         ]);
     }
 }
